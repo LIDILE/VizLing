@@ -9,15 +9,12 @@ Software requirements:
 R software package must be installed. 
 R pakage requirement
 Download:
-Make sure L2SCA directory is placed in the main directory
-
-```R
-library(readr)
-library(quanteda)
-library(readtext)
-library(stringr)
-
-```
+First copy this project to some directory on your computer
+Make sure that packages listed in requirements.txt are installed.
+Then enter the right project_directory in "main.R" file according to your system: win or linux.
+Finaly, add to your directory these java softwares: "stanford-parser-full-2014-01-04" and "stanford-tregex-2014-01-04" and you have to use the same name mentionned.
+Now, the project is ready to be used.
+Please read the file "architecture.docs" for more information about the input and the output of this project.
 
 
 ## Usage
