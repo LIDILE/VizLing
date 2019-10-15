@@ -1,1 +1,65 @@
 # Visualisation_linguistique
+
+Visualisation_linguistique is a R program to compute and visualise linguistic profiles extracted from texts written by learners of English. Learner-specific Key Performance Indicators (KPI) are computed and displayed in the form of graphical information. Comparisons with control groups are possible.  
+
+
+
+## Installation
+Software requirements: 
+R software package must be installed. 
+R pakage requirement
+Download:
+Make sure L2SCA directory is placed in the main directory
+
+```R
+library(readr)
+library(quanteda)
+library(readtext)
+library(stringr)
+
+```
+
+
+## Usage
+Input file: CELVA.sp csv file including texts from learners as well as metadata.
+
+Place all .csv at the root of the program. The text file versions of all student writings will be created in the 'corpusALE' folder. 
+
+In the terminal, change directory to VizLing.
+
+To process files and compute metrics type the follwing command: 
+
+```
+R ALE-all-metrics_vizling.r
+```
+
+To create visualisations of 9 learner KPI:
+```
+R NS_NNS_viz.r
+```
+
+## Change log
+
+10/10/2019 
+First integrated version of all scripts. One program runs pre-processing and metrics computation scripts. 
+The vizualisation script is run separately. 
+
+
+
+## Credits, License and citations
+
+This program includes an R version of L2SCA and Stanford CoreNLP. 
+
+- Lu, Xiaofei. 2010. “Automatic Analysis of Syntactic Complexity in Second Language Writing.” International Journal of Corpus Linguistics 15 (4): 474–496.
+- Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and David McClosky. 2014. “The Stanford CoreNLP Natural Language Processing Toolkit.” In Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, 55–60. http://acl2014.org/acl2014/.
+
+
+If you use this program for research purposes please cite the following paper:
+Gaillat, Thomas, and Nicolas Ballier. 2019. “Expérimentation de Feedback Visuel Des Productions Écrites d’apprenants Francophones de l’anglais Sous MOODLE.” In Actes de La Conférence EIAH2019. Paris , France: Association des Technologies de l’Information pour l’Éducation et la Formation.
+
+
+
+This program was funded by the DUNE DESIR AMI project from the universities of Rennes, France. It is licensed under CreativeCommons licence.
+
+Authors: Thomas Gaillat, Anas Kerfati and Antoine Lafontaine
+
