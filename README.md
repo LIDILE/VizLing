@@ -7,7 +7,7 @@ Visualisation_linguistique is a R program to compute and visualise linguistic pr
 ## Installation
 Software requirements: 
 R software package must be installed. 
-R pakage requirement
+R package requirement
 
 Download:
 
