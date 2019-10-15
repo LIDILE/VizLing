@@ -5,11 +5,12 @@ Visualisation_linguistique is a R program to compute and visualise linguistic pr
 
 
 ## Installation
-Software requirements: 
-R software package must be installed. 
-R package requirement
+Software requirements : 
+R software package must be installed.
 
-Download:
+R package requirement :
+
+Download :
 
 First copy this project to some directory on your computer
 
@@ -25,7 +26,7 @@ Please read the file "architecture.docs" for more information about the input an
 
 
 ## Usage
-Input file: CELVA.sp.csv (file containing texts of the learners as well as metadata)
+Input file : CELVA.sp.csv (file containing texts of the learners as well as metadata)
 
 Place all .csv at the root of the program. The text file versions of all student writings will be created in the 'corpusALE' folder. 
 
