@@ -1,0 +1,11 @@
+ readr
+quanteda
+readtext
+stringr
+spacyr
+tidyverse
+dplyr
+
+
+ 
+ 
