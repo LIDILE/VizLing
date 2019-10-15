@@ -13,11 +13,11 @@ Download:
 
 First copy this project to some directory on your computer
 
-Make sure that packages listed in requirements.txt are installed.
+Make sure that the packages listed in *requirements.txt* are installed.
 
-Then enter the right project_directory in "main.R" file according to your system: win or linux.
+Then enter the right *project_directory* in the "main.R" file according to your system : windows or linux.
 
-Finaly, add to your directory these java softwares: "stanford-parser-full-2014-01-04" and "stanford-tregex-2014-01-04" and you have to use the same name mentionned.
+Finally, add to your directory these java softwares: "stanford-parser-full-2014-01-04" and "stanford-tregex-2014-01-04" and you have to use the exact same names as mentionned.
 
 Now, the project is ready to be used.
 
@@ -25,13 +25,13 @@ Please read the file "architecture.docs" for more information about the input an
 
 
 ## Usage
-Input file: CELVA.sp csv file including texts from learners as well as metadata.
+Input file: CELVA.sp.csv (file containing texts of the learners as well as metadata)
 
 Place all .csv at the root of the program. The text file versions of all student writings will be created in the 'corpusALE' folder. 
 
-In the terminal, change directory to VizLing.
+In the terminal, change directory to *VizLing*.
 
-To process files and compute metrics type the follwing command: 
+To process files and compute metrics type the following command: 
 
 ```
 R ALE-all-metrics_vizling.r
@@ -58,7 +58,7 @@ This program includes an R version of L2SCA and Stanford CoreNLP.
 - Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and David McClosky. 2014. “The Stanford CoreNLP Natural Language Processing Toolkit.” In Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, 55–60. http://acl2014.org/acl2014/.
 
 
-If you use this program for research purposes please cite the following paper:
+If you use this program for research purposes, please cite the following paper:
 Gaillat, Thomas, and Nicolas Ballier. 2019. “Expérimentation de Feedback Visuel Des Productions Écrites d’apprenants Francophones de l’anglais Sous MOODLE.” In Actes de La Conférence EIAH2019. Paris , France: Association des Technologies de l’Information pour l’Éducation et la Formation.
 
 
