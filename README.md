@@ -65,5 +65,5 @@ Gaillat, Thomas, and Nicolas Ballier. 2019. “Expérimentation de Feedback Visu
 
 This program was funded by the DUNE DESIR AMI project from the universities of Rennes, France. It is licensed under CreativeCommons licence.
 
-Authors: Thomas Gaillat, Anas Kerfati and Antoine Lafontaine
+Authors: Thomas Gaillat, Anas Knefati and Antoine Lafontaine
 
