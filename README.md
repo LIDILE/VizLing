@@ -46,8 +46,8 @@ R NS_NNS_viz.r
 ## Change log
 
 10/10/2019 
-First integrated version of all scripts. One program runs pre-processing and metrics computation scripts. 
-The vizualisation script is run separately. 
+First integrated version of all scripts. One program runs the pre-processing and metrics computation scripts. 
+The visualisation script is run separately. 
 
 
 
