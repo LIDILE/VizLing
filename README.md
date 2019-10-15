@@ -32,7 +32,7 @@ Place all .csv at the root of the program. The text file versions of all student
 
 In the terminal, change directory to *VizLing*.
 
-To process files and compute metrics type the following command: 
+To process files and compute metrics, type the following command: 
 
 ```
 R ALE-all-metrics_vizling.r
