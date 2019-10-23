@@ -69,6 +69,7 @@ df_sampleALE_syntcompl <- read.csv(paste0(metrics_SCA,sep, "metrics_SCA.csv"),
 
 #Remove .txt extension in document id name
 row.names(df_sampleALE_syntcompl) <- gsub('.txt', '', row.names(df_sampleALE_syntcompl), fixed=TRUE)
+df_sampleALE_syntcompl$document <- row.names(df_sampleALE_syntcompl)
 
 
 
