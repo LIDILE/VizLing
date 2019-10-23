@@ -74,11 +74,14 @@ row.names(df_sampleALE_syntcompl) <- gsub('.txt', '', row.names(df_sampleALE_syn
 
 #merge all metrics in one df 
 
-df_sampleALE_allMetrics <- cbind(sampleALE_lexdiv,
-                                 df_sampleALE_readability,
-                                 df_sampleALE_syntcompl)
+df_sampleALE_allMetrics <- merge(sampleALE_lexdiv, df_sampleALE_readability, by="document")
+df_sampleALE_allMetrics <- merge(df_sampleALE_allMetrics, df_sampleALE_syntcompl, by="document")
 
-#df_sampleALE_allMetrics <-merge(df_sampleALE_allMetrics,df_sampleALE_syntcompl, by="document")
+library(stringr)
+
+names(df_sampleALE_allMetrics)[which(str_sub(names(df_sampleALE_allMetrics), start = -2)==".x")] <- str_sub(names(df_sampleALE_allMetrics)[which(str_sub(names(df_sampleALE_allMetrics), start = -2)==".x")], start = 1, end = -3)
+names(df_sampleALE_allMetrics)[which(str_sub(names(df_sampleALE_allMetrics), start = -2)==".y")] <- paste(str_sub(names(df_sampleALE_allMetrics)[which(str_sub(names(df_sampleALE_allMetrics), start = -2)==".y")], start = 1, end = -3),".1",sep = "")
+
 
 
 write.csv(df_sampleALE_allMetrics, 
