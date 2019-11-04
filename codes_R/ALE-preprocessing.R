@@ -17,7 +17,7 @@ library(tidyverse)
 library(dplyr)
 
 
-options(java.parameters = "-Xmx8000m")   # permet ? R d'utiliser plus de RAM
+options(java.parameters = "-Xmx8000m")   # permet a R d'utiliser plus de RAM
 
 
 #Import csv as data frame 
@@ -60,7 +60,7 @@ df_sampleALE <-subset(df_sampleALE, df_sampleALE$Acceptation_donnees=="Oui")
 
 
 
-## Correction ann?e de naissance
+## Correction annee de naissance
 for(i in which(nchar(df_sampleALE$Annee_naissance) != 4 & nchar(df_sampleALE$Age) == 2)){
   df_sampleALE$Annee_naissance[i] <- as.character(as.numeric(substr( str_split(df_sampleALE[i,"Date.ajout"], pattern = " ")[[1]][4], 1, nchar(str_split(df_sampleALE[i,"Date.ajout"], pattern = " ")[[1]][4])-1)) - df_sampleALE$Age[i])
 }
@@ -78,15 +78,16 @@ df_sampleALE$text <- cleanFun(df_sampleALE$text)
 df_sampleALE$text <- gsub("&amp;", "", df_sampleALE$text, fixed=TRUE)
 
 
-## On enl?ve/modifie les caract?res sp?ciaux
+## On enleve/modifie les caracteres speciaux
+df_sampleALE$text <- gsub('\n', " ", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub('\"', " ", df_sampleALE$text, fixed=TRUE)
-df_sampleALE$text <- gsub("?", " ", df_sampleALE$text, fixed=TRUE)
-df_sampleALE$text <- gsub("?", " ", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("¤", " ", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("§", " ", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub("@", " ", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub("+", " ", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub("$", " ", df_sampleALE$text, fixed=TRUE)
-df_sampleALE$text <- gsub("?", " ", df_sampleALE$text, fixed=TRUE)
-df_sampleALE$text <- gsub("?", " ", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("£", " ", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("µ", " ", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub("[", "(", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub("]", ")", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub("{", "(", df_sampleALE$text, fixed=TRUE)
@@ -101,10 +102,11 @@ df_sampleALE$text <- gsub("[][]|[^[:ascii:]]", " ", df_sampleALE$text, perl=T)  
 
 ## Transformation ponctuation/espace
 
-# cr?er espaces autour de ponctuation, r?duire espaces, supprimer espaces non d?sir?s
+# creer espaces autour de ponctuation, reduire espaces, supprimer espaces non desires
 df_sampleALE$text <- gsub(".", " . ", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub(",", " , ", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub(";", " ; ", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub(":", " : ", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub("!", " ! ", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub("?", " ? ", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub("(", " ( ", df_sampleALE$text, fixed=TRUE)
@@ -133,11 +135,11 @@ df_sampleALE$text <- gsub("\\s+"," ", df_sampleALE$text)
 
 
 
-## On enl?ve les ?ventuels espaces en fin de chaine de caract?res 
+## On enleve les eventuels espaces en fin de chaine de caracteres 
 df_sampleALE$text <- trimws(df_sampleALE$text)
 
 
-## Ajout d'une variable comptant le nombre de "I" n'?tant pas mis en majuscule et d'une variable binaire associ?e
+## Ajout d'une variable comptant le nombre de "I" n'etant pas mis en majuscule et d'une variable binaire associee
 df_sampleALE$nb_i <- NA
 df_sampleALE$nb_i <- str_count(df_sampleALE$text, " i ") + str_count(df_sampleALE$text, " i'")
 df_sampleALE$nb_i[which(str_sub(df_sampleALE$text, start = 1, end = 2) %in% c("i ","i'"))] <- df_sampleALE$nb_i[which(str_sub(df_sampleALE$text, start = 1, end = 2) %in% c("i ","i'"))] + 1
@@ -164,12 +166,12 @@ df_sampleALE$text <- gsub(" can't", " cannot", df_sampleALE$text, fixed=TRUE)
 
 
 
-## On enl?ve les ?ventuels accents venant d'expressions fran?aises pour le parseur : Samuel Hahnemann read the Trait? de mati?re m?dicale by William Cullen
-unwanted_array = list(    'S'='S', 's'='s', 'Z'='Z', 'z'='z', '?'='A', '?'='A', '?'=' ', '?'='A', '?'='A', '?'='A', '?'='A', '?'='C', '?'='E', '?'='E',
-                          '?'='E', '?'='E', '?'='I', '?'='I', '?'='I', '?'='I', '?'='N', '?'='O', '?'='O', '?'='O', '?'='O', '?'='O', '?'='O', '?'='U',
-                          '?'='U', '?'='U', '?'='U', '?'='Y', '?'='B', '?'='a', '?'='a', '?'='a', '?'='a', '?'='a', '?'='a', '?'='a', '?'='c',
-                          '?'='e', '?'='e', '?'='e', '?'='e', '?'='i', '?'='i', '?'='i', '?'='i', '?'='o', '?'='n', '?'='o', '?'='o', '?'='o', '?'='o',
-                          '?'='o', '?'='o', '?'='u', '?'='u', '?'='u', '?'='y', '?'='y', '?'='b', '?'='y' )
+## On enleve les eventuels accents venant d'expressions francaises pour le parseur : Samuel Hahnemann read the Traite de matiere medicale by William Cullen
+unwanted_array = list(    'S'='S', 's'='s', 'Z'='Z', 'z'='z', 'À'='A', 'Á'='A', 'Â'=' ', 'Ã'='A', 'Ä'='A', 'Å'='A', 'Æ'='A', 'Ç'='C', 'È'='E', 'É'='E',
+                          'Ê'='E', 'Ë'='E', 'Ì'='I', 'Í'='I', 'Î'='I', 'Ï'='I', 'Ñ'='N', 'Ò'='O', 'Ó'='O', 'Ô'='O', 'Õ'='O', 'Ö'='O', 'Ø'='O', 'Ù'='U',
+                          'Ú'='U', 'Û'='U', 'Ü'='U', 'Ý'='Y', 'Þ'='B', 'à'='a', 'á'='a', 'â'='a', 'ã'='a', 'ä'='a', 'å'='a', 'æ'='a', 'ç'='c',
+                          'è'='e', 'é'='e', 'ê'='e', 'ë'='e', 'ì'='i', 'í'='i', 'î'='i', 'ï'='i', 'ð'='o', 'ñ'='n', 'ò'='o', 'ó'='o', 'ô'='o', 'õ'='o',
+                          'ö'='o', 'ø'='o', 'ù'='u', 'ú'='u', 'û'='u', 'ý'='y', 'ý'='y', 'þ'='b', 'ÿ'='y' )
 
 df_sampleALE$text <- chartr(paste(names(unwanted_array), collapse=''), paste(unwanted_array, collapse=''), df_sampleALE$text)
 
