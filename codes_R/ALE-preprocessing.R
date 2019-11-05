@@ -167,7 +167,7 @@ df_sampleALE$text <- gsub(" can't", " cannot", df_sampleALE$text, fixed=TRUE)
 
 
 ## On enleve les eventuels accents venant d'expressions francaises pour le parseur : Samuel Hahnemann read the Traite de matiere medicale by William Cullen
-unwanted_array = list(    'S'='S', 's'='s', 'Z'='Z', 'z'='z', 'À'='A', 'Á'='A', 'Â'=' ', 'Ã'='A', 'Ä'='A', 'Å'='A', 'Æ'='A', 'Ç'='C', 'È'='E', 'É'='E',
+unwanted_array = list(    'S'='S', 's'='s', 'Z'='Z', 'z'='z', 'À'='A', 'Á'='A', 'Â'='A', 'Ã'='A', 'Ä'='A', 'Å'='A', 'Æ'='A', 'Ç'='C', 'È'='E', 'É'='E',
                           'Ê'='E', 'Ë'='E', 'Ì'='I', 'Í'='I', 'Î'='I', 'Ï'='I', 'Ñ'='N', 'Ò'='O', 'Ó'='O', 'Ô'='O', 'Õ'='O', 'Ö'='O', 'Ø'='O', 'Ù'='U',
                           'Ú'='U', 'Û'='U', 'Ü'='U', 'Ý'='Y', 'Þ'='B', 'à'='a', 'á'='a', 'â'='a', 'ã'='a', 'ä'='a', 'å'='a', 'æ'='a', 'ç'='c',
                           'è'='e', 'é'='e', 'ê'='e', 'ë'='e', 'ì'='i', 'í'='i', 'î'='i', 'ï'='i', 'ð'='o', 'ñ'='n', 'ò'='o', 'ó'='o', 'ô'='o', 'õ'='o',
@@ -177,6 +177,13 @@ df_sampleALE$text <- chartr(paste(names(unwanted_array), collapse=''), paste(unw
 
 df_sampleALE$text <- gsub("\\s+"," ", df_sampleALE$text)
 df_sampleALE$text <- trimws(df_sampleALE$text)
+
+
+## On ajoute des points à la fin des textes s'il n'y en a pas pour le parseur.
+
+df_sampleALE$text[!(str_sub(df_sampleALE$text,-1,-1) %in% c(".","?","!"))] <- paste(df_sampleALE$text[!(str_sub(df_sampleALE$text,-1,-1) %in% c(".","?","!"))],".", sep = "")
+
+
 
 
 path_cleaned_texts = paste0(project_directory, corpus_SCELVA_cleaned)
