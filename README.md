@@ -20,7 +20,7 @@ R package requirement :
 
 5. Add to your project directory these java software applications: "stanford-parser-full-2014-01-04" (from https://nlp.stanford.edu/software/lex-parser.shtml) and "stanford-tregex-2014-01-04" (from https://nlp.stanford.edu/software/tregex.html) and you have to use the exact same names as mentionned.
 
-6. Unzip each directory in the same location. REmove the zip files. 
+6. Unzip each directory in the same location. REmove the zip files. Open Visualisation_linguistique-master/stanford-tregex-2014-01-04/tregex.sh. Modify memory allocation: change "java -mx100m ..." to "java -mx1500m ..."
 
 Now, the project is ready to be used.
 
