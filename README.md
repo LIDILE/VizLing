@@ -55,7 +55,7 @@ The visualisation script is run separately.
 
 ## Credits, License and citations
 
-This program includes an R version of L2SCA and Stanford CoreNLP. 
+This program includes an R implementation of L2SCA (make_parsed_files.r) and Stanford CoreNLP. 
 
 - Lu, Xiaofei. 2010. “Automatic Analysis of Syntactic Complexity in Second Language Writing.” International Journal of Corpus Linguistics 15 (4): 474–496.
 - Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and David McClosky. 2014. “The Stanford CoreNLP Natural Language Processing Toolkit.” In Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, 55–60. http://acl2014.org/acl2014/.
