@@ -16,9 +16,11 @@ First copy this project to some directory on your computer
 
 Make sure that the packages listed in *requirements.txt* are installed.
 
-Then enter the right *project_directory* in the "main.R" file according to your system : windows or linux.
+Then enter the right *project_directory* (Visualisation_linguistique-master default name). Open "main.R" in Visualisation_linguistique-master/codes_R . MODIFY path according to your system : windows or linux.
 
-Finally, add to your directory these java softwares: "stanford-parser-full-2014-01-04" and "stanford-tregex-2014-01-04" and you have to use the exact same names as mentionned.
+Finally, add to your project directory these java software applications: "stanford-parser-full-2014-01-04" (from https://nlp.stanford.edu/software/lex-parser.shtml) and "stanford-tregex-2014-01-04" (from https://nlp.stanford.edu/software/tregex.html) and you have to use the exact same names as mentionned.
+
+Unzip each directory in the same location. REmove the zip files. 
 
 Now, the project is ready to be used.
 
