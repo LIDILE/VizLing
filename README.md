@@ -10,7 +10,7 @@ R software packages must be installed.
 
 R package requirement :
 
-1 .Download zip file
+1. Download zip file from Moodle Assignment activity.
 
 2. First copy and unzip this project to some directory on your computer
 
