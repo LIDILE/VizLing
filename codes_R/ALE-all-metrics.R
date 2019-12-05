@@ -1,3 +1,4 @@
+library(stringr)
 
 #Input: df_sampleALE.csv created with ALE-processing.r 
 #Output: df_sample_all_metrics.csv 
@@ -22,14 +23,8 @@ df_sampleALE_readability <-textstat_readability(df_sampleALE$text, measure = c("
 df_sampleALE_readability$document <-df_sampleALE$doc_id
 
 
-
-# Lexical diversity metrics
-# For non natives
-
 #Transform data frame into corpus object
 corpus_sampleALE <-corpus(df_sampleALE, text_field = "text")
-# summary(corpus_sampleALE,5)
-
 
 
 
@@ -39,17 +34,12 @@ corpus_sampleALE <-corpus(df_sampleALE, text_field = "text")
 
 #Tokenise
 corpus_sampleALE_tokens <- tokens(corpus_sampleALE)
-# head(corpus_sampleALE_tokens, 1)
 
 #construct a document-feature matrix. One line per student text. 
 sampleALE_dfm  <- dfm(corpus_sampleALE_tokens)
-# ndoc(sampleALE_dfm)
-# nfeat(sampleALE_dfm)
-# docnames(sampleALE_dfm)
 
 #Remove specific features from dfm (stopwords)
 sampleALE_dfm <- dfm_select(sampleALE_dfm, stopwords('en'), selection = 'remove')
-# nfeat(sampleALE_dfm)
 
 sampleALE_dfm <- dfm_remove(sampleALE_dfm, c('(',')',':','.','/',',','"'))   # ; ?
 
@@ -57,13 +47,9 @@ sampleALE_lexdiv <- textstat_lexdiv(sampleALE_dfm,
                                     measure = c("all", "TTR", "C", "R", "CTTR", "U", "S", "Maas","K"), 
                                     log.base = 10)
 
-#Append CEFR LEvel to metrics df TO BE DONE 3/05/19. The idea is to create a group of B2 students with lexdiv
-#df_sampleALE$doc_id
-#df_sampleALE_lexdiv_B2 <-merge(sampleALE_lexdiv,df_sampleALE, by="doc_id")
-
 
 #Syntactic complexity metrics
-df_sampleALE_syntcompl <- read.csv(paste0(metrics_SCA,sep, "metrics_SCA.csv"), 
+df_sampleALE_syntcompl <- read.csv(paste0(metrics_SCA,sep, paste0(metrics_SCA,".csv")), 
                                    row.names=1, stringsAsFactors=FALSE)
 
 
@@ -74,19 +60,22 @@ df_sampleALE_syntcompl$document <- row.names(df_sampleALE_syntcompl)
 
 
 #merge all metrics in one df 
-
 df_sampleALE_allMetrics <- merge(sampleALE_lexdiv, df_sampleALE_readability, by="document")
 df_sampleALE_allMetrics <- merge(df_sampleALE_allMetrics, df_sampleALE_syntcompl, by="document")
 
-library(stringr)
 
-names(df_sampleALE_allMetrics)[which(str_sub(names(df_sampleALE_allMetrics), start = -2)==".x")] <- str_sub(names(df_sampleALE_allMetrics)[which(str_sub(names(df_sampleALE_allMetrics), start = -2)==".x")], start = 1, end = -3)
-names(df_sampleALE_allMetrics)[which(str_sub(names(df_sampleALE_allMetrics), start = -2)==".y")] <- paste(str_sub(names(df_sampleALE_allMetrics)[which(str_sub(names(df_sampleALE_allMetrics), start = -2)==".y")], start = 1, end = -3),".1",sep = "")
+names(df_sampleALE_allMetrics)[which(str_sub(names(df_sampleALE_allMetrics), start = -2)==".x")] <- str_sub(
+  names(df_sampleALE_allMetrics)[which(str_sub(names(df_sampleALE_allMetrics), start = -2)==".x")], start = 1, end = -3
+  )
+
+names(df_sampleALE_allMetrics)[which(str_sub(names(df_sampleALE_allMetrics), start = -2)==".y")] <- paste(
+  str_sub(names(df_sampleALE_allMetrics)[which(str_sub(names(df_sampleALE_allMetrics), start = -2)==".y")], start = 1, end = -3),".1",sep = ""
+  )
 
 
 
 write.csv(df_sampleALE_allMetrics, 
-          file=paste0(metrics_SCA, sep, "df_sampleALE_allMetrics.csv"), 
+          file=paste0(metrics_SCA, sep, df_all_metrics), 
           row.names = FALSE)
 cat("-->> Finish script of calculating metrics!")
 

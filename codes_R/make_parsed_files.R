@@ -132,10 +132,9 @@ raw_text_files = list.files(path_input_text)
 # sort files with respect to increasing order
 raw_name = function(u){unlist(strsplit(u, split = ".txt"))}
 str_name = unname(sapply(raw_text_files, raw_name))
-num_name = unname(sapply(str_name, as.numeric))
-num_name_sorted = sort(num_name)
-str_name_sorted = as.character(num_name_sorted)
-text_files = paste0(str_name_sorted, ".txt")
+# num_name = unname(sapply(str_name, as.numeric))
+num_name_sorted = sort(str_name)
+text_files = paste0(num_name_sorted, ".txt")
 
 files_size = length(text_files)
 

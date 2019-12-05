@@ -5,6 +5,29 @@ stringr
 spacyr
 tidyverse
 dplyr
+ggplot2
+scales
+grid
+gridExtra
+magick
+
+pkgTest <- function(x)
+{
+  if (! x %in% rownames(installed.packages()))
+  {
+    install.packages(x,dep=TRUE)
+    if(!require(x,character.only = TRUE)) stop("Package not found")
+    "is installed now"
+  }else{
+    "is already installed"
+  }
+}
+
+
+list_requirements = c("readr", "quanteda", "readtext", "stringr", "spacyr", "tidyverse", "dplyr",
+                      "gridExtra", "scales", "grid", "gridExtra", "magick")
+
+sapply(list_requirements, pkgTest)
 
 
  
