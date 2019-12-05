@@ -10,7 +10,7 @@ R software packages must be installed.
 
 R package requirement :
 
-1. Download zip file from Moodle Assignment activity.
+1. Download zip file.
 
 2. First copy and unzip this project to some directory on your computer
 
@@ -20,7 +20,7 @@ R package requirement :
 
 5. Add to your project directory these java software applications: "stanford-parser-full-2014-01-04" (from https://nlp.stanford.edu/software/lex-parser.shtml) and "stanford-tregex-2014-01-04" (from https://nlp.stanford.edu/software/tregex.html) and you have to use the exact same names as mentionned.
 
-6. Unzip each directory in the same location. REmove the zip files. Open Visualisation_linguistique-master/stanford-tregex-2014-01-04/tregex.sh. Modify memory allocation: change "java -mx100m ..." to "java -mx1500m ..."
+6. Unzip each directory in the same location. eEmove the zip files. Open Visualisation_linguistique-master/stanford-tregex-2014-01-04/tregex.sh. Modify memory allocation: change "java -mx100m ..." to "java -mx1500m ..."
 
 Now, the project is ready to be used.
 
@@ -28,7 +28,8 @@ Please read the file "architecture.docs" for more information about the input an
 
 
 ## Usage
-Input file : CELVA.sp.csv (file containing texts of the learners as well as metadata)
+
+Input file : zip file from Moodle Assignment activity (file containing texts of the learners)
 
 Place all .csv at the root of the program. The text file versions of all student writings will be created in the *corpusALE* folder. 
 
