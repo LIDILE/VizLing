@@ -21,7 +21,7 @@ df_sampleALE_allMetrics <- read.csv(paste0(metrics_SCA,"/","df_sampleALE_allMetr
 df_control_cohort_allMetrics <-  read.csv(paste0(metrics_SCA,"/","cohort_df_sampleALE_allMetrics.csv"))
 #df_control_cohort_allMetrics <-   read.csv(paste0(metrics_SCA,"/","df_sampleALE_allMetrics.csv"))
 
-# On enl?ve les deux ?tudiants qui n'ont rien ?crit ou qui ont ?crit un seul mot
+# On enleve les deux etudiants qui n'ont rien ecrit ou qui ont ecrit un seul mot dans la cohorte controle
 df_control_cohort_allMetrics <- df_control_cohort_allMetrics[!(df_control_cohort_allMetrics$document %in% c(17000798,15006495)),]
 
 
@@ -125,7 +125,7 @@ tt2 <- ttheme_default(core = list(fg_params=list(cex = 1.1)),
 
 
 
-# Fonction pour mettre le graphe en coordonn?es polaires et lin?ariser les segments incurv?s
+# Fonction pour mettre le graphe en coordonnees polaires et lineariser les segments incurves
 
 coord_radar <- function (theta = "x", start = 0, direction = 1) {
   theta <- match.arg(theta, c("x", "y"))
@@ -145,8 +145,15 @@ coord_radar <- function (theta = "x", start = 0, direction = 1) {
 library(magick)
 
 im_pdf <- image_read_pdf(paste0(requirements_feedbacks,"/", "page_garde_sommaire.pdf"))
+          
+
+# Image si radar impossible à realiser
+          
+img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
+myplot <- image_ggplot(img)
 
 
+          
 # Fonction de visualisation
 
 viz <- function(student_ID){
@@ -258,10 +265,7 @@ viz <- function(student_ID){
   
   if(all(tab_indic$out=="oui")){
     print("Completement hors radar")
-    
-    library(magick)
-    img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
-    myplot <- image_ggplot(img)
+
     text = "You are off radar for all indicators"
     data.text <- ggplot() + 
       ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
@@ -284,10 +288,7 @@ viz <- function(student_ID){
   } else{
     if(length(tab_indic$out[which(tab_indic$out=="non")]) <3){
       print("Trop peu d'indicateurs pour afficher un radar (moins de 3)")
-      
-      library(magick)
-      img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
-      myplot <- image_ggplot(img)
+
       text = "You are off radar for most indicators"
       data.text <- ggplot() + 
         ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
@@ -455,10 +456,8 @@ viz <- function(student_ID){
   levels(tb_A2$group)[1:6] <- paste("median of", levels(tb_A2$group)[1:6])
   
   if(all(tab_indic$out=="oui")){
-    print("Compl?tement hors radar")
-    
-    img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
-    myplot <- image_ggplot(img)
+    print("Completement hors radar")
+
     text = "You are off radar for all indicators"
     data.text <- ggplot() + 
       ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
@@ -481,9 +480,7 @@ viz <- function(student_ID){
   } else{
     if(length(tab_indic$out[which(tab_indic$out=="non")]) <3){
       print("Trop peu d'indicateurs pour afficher un radar (moins de 3)")
-      
-      img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
-      myplot <- image_ggplot(img)
+
       text = "You are off radar for most indicators"
       data.text <- ggplot() + 
         ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
@@ -648,10 +645,8 @@ viz <- function(student_ID){
   levels(tb_B1$group)[1:6] <- paste("median of", levels(tb_B1$group)[1:6])
   
   if(all(tab_indic$out=="oui")){
-    print("Compl?tement hors radar")
-    
-    img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
-    myplot <- image_ggplot(img)
+    print("Completement hors radar")
+
     text = "You are off radar for all indicators"
     data.text <- ggplot() + 
       ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
@@ -674,9 +669,7 @@ viz <- function(student_ID){
   } else{
     if(length(tab_indic$out[which(tab_indic$out=="non")]) <3){
       print("Trop peu d'indicateurs pour afficher un radar (moins de 3)")
-      
-      img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
-      myplot <- image_ggplot(img)
+
       text = "You are off radar for most indicators"
       data.text <- ggplot() + 
         ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
@@ -843,10 +836,8 @@ viz <- function(student_ID){
   levels(tb_B2$group)[1:6] <- paste("median of", levels(tb_B2$group)[1:6])
   
   if(all(tab_indic$out=="oui")){
-    print("Compl?tement hors radar")
-    
-    img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
-    myplot <- image_ggplot(img)
+    print("Completement hors radar")
+
     text = "You are off radar for all indicators"
     data.text <- ggplot() + 
       ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
@@ -869,9 +860,7 @@ viz <- function(student_ID){
   } else{
     if(length(tab_indic$out[which(tab_indic$out=="non")]) <3){
       print("Trop peu d'indicateurs pour afficher un radar (moins de 3)")
-      
-      img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
-      myplot <- image_ggplot(img)
+
       text = "You are off radar for most indicators"
       data.text <- ggplot() + 
         ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
@@ -1039,10 +1028,8 @@ viz <- function(student_ID){
   levels(tb_C1$group)[1:6] <- paste("median of", levels(tb_C1$group)[1:6])
   
   if(all(tab_indic$out=="oui")){
-    print("Compl?tement hors radar")
-    
-    img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
-    myplot <- image_ggplot(img)
+    print("Completement hors radar")
+
     text = "You are off radar for all indicators"
     data.text <- ggplot() + 
       ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
@@ -1065,9 +1052,7 @@ viz <- function(student_ID){
   } else{
     if(length(tab_indic$out[which(tab_indic$out=="non")]) <3){
       print("Trop peu d'indicateurs pour afficher un radar (moins de 3)")
-      
-      img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
-      myplot <- image_ggplot(img)
+
       text = "You are off radar for most indicators"
       data.text <- ggplot() + 
         ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
@@ -1234,10 +1219,8 @@ viz <- function(student_ID){
   levels(tb_C2$group)[1:6] <- paste("median of", levels(tb_C2$group)[1:6])
   
   if(all(tab_indic$out=="oui")){
-    print("Compl?tement hors radar")
-    
-    img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
-    myplot <- image_ggplot(img)
+    print("Completement hors radar")
+
     text = "You are off radar for all indicators"
     data.text <- ggplot() + 
       ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
@@ -1260,9 +1243,7 @@ viz <- function(student_ID){
   } else{
     if(length(tab_indic$out[which(tab_indic$out=="non")]) <3){
       print("Trop peu d'indicateurs pour afficher un radar (moins de 3)")
-      
-      img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
-      myplot <- image_ggplot(img)
+
       text = "You are off radar for most indicators"
       data.text <- ggplot() + 
         ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
@@ -1450,7 +1431,7 @@ for(i in 1:length(student_ID)){
 # 
 # 
 # 
-# ### M?ta-donn?es (hist / facet_wrap + boxplot)
+# ### Meta-donnees (hist / facet_wrap + boxplot)
 # 
 # df_sampleALE  <- read.csv2(file = "S:/DUNE-DESIR/VisLinguistique/Test_chaine/VisLang/corpusSCELVA_cleaned/sample_SCELVA.csv", sep = ",")
 # 
