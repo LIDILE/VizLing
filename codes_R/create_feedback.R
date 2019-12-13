@@ -10,7 +10,8 @@ library(ggplot2)
 library(scales)
 library(grid)
 library(gridExtra)
-
+library(ggiraphExtra) # pour coord_radar, fonction pour mettre le graphe en coordonnées polaires et linéariser les segments incurvés
+library(magick)       # pour importer les pdf sous forme d'images
 
 
 ## Importation de la cohorte temoin et des etudiants a comparer
@@ -51,13 +52,10 @@ df_control_cohort_allMetrics <- df_control_cohort_allMetrics[which(is.na(df_cont
 
 
 
-
-
 ## Creation NDW
 
 df_sampleALE_allMetrics$NDW <- round(df_sampleALE_allMetrics$TTR * df_sampleALE_allMetrics$W)
 df_control_cohort_allMetrics$NDW <- round(df_control_cohort_allMetrics$TTR * df_control_cohort_allMetrics$W)
-
 
 
 
@@ -76,8 +74,6 @@ df_control_cohort_allMetrics <- df_control_cohort_allMetrics[,c("document","CTTR
                                                                 "type1","type2")]
 
 df_NS_NNS_allMetrics <-rbind(df_control_cohort_allMetrics, df_sampleALE_allMetrics)
-
-
 
 names(df_NS_NNS_allMetrics) <- c("document","CTTR","W","S","T","FOG","RIX","NDW","MLT",
                                  "CN/T","CP/T","K","type1","type2")
@@ -99,8 +95,8 @@ names(description) <- gsub(names(description), pattern = ".", replacement = " ",
 #########    Partie visualisation
 ##############################################################
 
-# Mise en forme du tableau de description des variables
 
+###### Mise en forme du tableau de description des variables
 
 theme_desc <- gridExtra::ttheme_default(
   core = list(fg_params=list(hjust=0, cex = 2, x=rep(0.01,11)),
@@ -109,11 +105,14 @@ theme_desc <- gridExtra::ttheme_default(
   rowhead = list(fg_params=list(cex = 2)),
   base_size = 10)
 
+
+###### Tableau de description des variables
+
 gr <- tableGrob(description, rows=NULL, theme=theme_desc)
 
 
 
-# Mise en forme du tableau de donnees mis sous le radar
+###### Mise en forme du tableau de donnees mis sous le radar
 
 tt <- ttheme_default(colhead=list(fg_params = list(parse=TRUE)),
                      base_size = 10,
@@ -125,63 +124,43 @@ tt2 <- ttheme_default(core = list(fg_params=list(cex = 1.1)),
 
 
 
-# Fonction pour mettre le graphe en coordonnees polaires et lineariser les segments incurves
-
-coord_radar <- function (theta = "x", start = 0, direction = 1) {
-  theta <- match.arg(theta, c("x", "y"))
-  if (theta == "x") {
-    r <- "y"
-  } else{ r <- "x"}
-  
-  ggproto("CordRadar", CoordPolar, theta = theta, r = r, start = start, 
-          direction = sign(direction),
-          is_linear = function(coord) TRUE)
-}
-
-
-
-# Page de garde et sommaire
-
-library(magick)
+###### Page de garde et sommaire
 
 im_pdf <- image_read_pdf(paste0(requirements_feedbacks,"/", "page_garde_sommaire.pdf"))
           
 
-# Image si radar impossible à realiser
+###### Image si radar impossible à realiser (image libre de droit)
           
 img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
-myplot <- image_ggplot(img)
+im_plot <- image_ggplot(img)
 
 
           
-# Fonction de visualisation
+###### Fonction de visualisation
 
 viz <- function(student_ID){
   
-  ## On ne garde que l'etudiant concerne
+  # On ne garde que l'etudiant concerne
   df_NS_NNS_9metrics <- df_NS_NNS_allMetrics[which(str_sub(df_NS_NNS_allMetrics$document,1,2)=="w1" | df_NS_NNS_allMetrics$document==student_ID),]
   
   
-  # Page de garde et sommaire
+  ###### Page de garde et sommaire
   
   grid.arrange(image_ggplot(im_pdf[1]))
   grid.arrange(image_ggplot(im_pdf[2]), bottom=textGrob("1", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
   
   
-  # Graphique description indicateurs
+  ###### Graphique tableau de description des indicateurs
   
   grid.arrange(top=textGrob("Table of the indicators of linguistic richness", x=0.5, y=-0.5, gp=gpar(fontsize=30,font=50)), gr,
                bottom=textGrob("2", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
   
   
   
-  
-  ##### Radar chart
-  
+  ###### Radar chart
   
   
-  ## Bornes indicateurs
-  
+  ### Bornes indicateurs
   
   indic <- names(df_NS_NNS_9metrics)[2:(ncol(df_NS_NNS_9metrics)-2)]
   #          "CTTR"  "W" "S" "T" "FOG" "RIX" "NDW" "MLT" "CN.T" "CP.T"  "K"       
@@ -205,91 +184,56 @@ viz <- function(student_ID){
   }
   
   
-  # Creation sous df 
-  
-  df_NS_NNS_9metrics_A1 <- df_NS_NNS_9metrics[which(df_NS_NNS_9metrics$type2=="A1" | df_NS_NNS_9metrics$type2=="student"),]
-  df_NS_NNS_9metrics_A2 <- df_NS_NNS_9metrics[which(df_NS_NNS_9metrics$type2=="A2" | df_NS_NNS_9metrics$type2=="student"),]
-  df_NS_NNS_9metrics_B1 <- df_NS_NNS_9metrics[which(df_NS_NNS_9metrics$type2=="B1" | df_NS_NNS_9metrics$type2=="student"),]
-  df_NS_NNS_9metrics_B2 <- df_NS_NNS_9metrics[which(df_NS_NNS_9metrics$type2=="B2" | df_NS_NNS_9metrics$type2=="student"),]
-  df_NS_NNS_9metrics_C1 <- df_NS_NNS_9metrics[which(df_NS_NNS_9metrics$type2=="C1" | df_NS_NNS_9metrics$type2=="student"),]
-  df_NS_NNS_9metrics_C2 <- df_NS_NNS_9metrics[which(df_NS_NNS_9metrics$type2=="C2" | df_NS_NNS_9metrics$type2=="student"),]
-  
-  
-  
-  
-  
-  # Normalisation
+  ### Normalisation
   
   df_NS_NNS_9metrics_norm    <- df_NS_NNS_9metrics
-  df_NS_NNS_9metrics_norm_A1 <- df_NS_NNS_9metrics_A1
-  df_NS_NNS_9metrics_norm_A2 <- df_NS_NNS_9metrics_A2
-  df_NS_NNS_9metrics_norm_B1 <- df_NS_NNS_9metrics_B1
-  df_NS_NNS_9metrics_norm_B2 <- df_NS_NNS_9metrics_B2
-  df_NS_NNS_9metrics_norm_C1 <- df_NS_NNS_9metrics_C1
-  df_NS_NNS_9metrics_norm_C2 <- df_NS_NNS_9metrics_C2
-  
-  df_NS_NNS_9metrics_norm_A1$type2 <- as.factor(as.character(df_NS_NNS_9metrics_norm_A1$type2))
-  df_NS_NNS_9metrics_norm_A2$type2 <- as.factor(as.character(df_NS_NNS_9metrics_norm_A2$type2))
-  df_NS_NNS_9metrics_norm_B1$type2 <- as.factor(as.character(df_NS_NNS_9metrics_norm_B1$type2))
-  df_NS_NNS_9metrics_norm_B2$type2 <- as.factor(as.character(df_NS_NNS_9metrics_norm_B2$type2))
-  df_NS_NNS_9metrics_norm_C1$type2 <- as.factor(as.character(df_NS_NNS_9metrics_norm_C1$type2))
-  df_NS_NNS_9metrics_norm_C2$type2 <- as.factor(as.character(df_NS_NNS_9metrics_norm_C2$type2))
-  
-  
-  
+ 
   for(i in 1:nrow(tab_indic)){
     df_NS_NNS_9metrics_norm[,tab_indic$indic[i]] <- (df_NS_NNS_9metrics_norm[,tab_indic$indic[i]] - tab_indic$minimum[i]) / (tab_indic$maximum[i] - tab_indic$minimum[i])
-    
-    df_NS_NNS_9metrics_norm_A1[,tab_indic$indic[i]] <- (df_NS_NNS_9metrics_norm_A1[,tab_indic$indic[i]] - tab_indic$minimum[i]) / (tab_indic$maximum[i] - tab_indic$minimum[i])
-    df_NS_NNS_9metrics_norm_A2[,tab_indic$indic[i]] <- (df_NS_NNS_9metrics_norm_A2[,tab_indic$indic[i]] - tab_indic$minimum[i]) / (tab_indic$maximum[i] - tab_indic$minimum[i])
-    df_NS_NNS_9metrics_norm_B1[,tab_indic$indic[i]] <- (df_NS_NNS_9metrics_norm_B1[,tab_indic$indic[i]] - tab_indic$minimum[i]) / (tab_indic$maximum[i] - tab_indic$minimum[i])
-    df_NS_NNS_9metrics_norm_B2[,tab_indic$indic[i]] <- (df_NS_NNS_9metrics_norm_B2[,tab_indic$indic[i]] - tab_indic$minimum[i]) / (tab_indic$maximum[i] - tab_indic$minimum[i])
-    df_NS_NNS_9metrics_norm_C1[,tab_indic$indic[i]] <- (df_NS_NNS_9metrics_norm_C1[,tab_indic$indic[i]] - tab_indic$minimum[i]) / (tab_indic$maximum[i] - tab_indic$minimum[i])
-    df_NS_NNS_9metrics_norm_C2[,tab_indic$indic[i]] <- (df_NS_NNS_9metrics_norm_C2[,tab_indic$indic[i]] - tab_indic$minimum[i]) / (tab_indic$maximum[i] - tab_indic$minimum[i])
   }
   
+ 
+  ### Niveaux
+  
+  niveaux <- c("A1","A2","B1","B2","C1","C2")
+  
+  
+  ### Pagination
+  
+  page <- as.character(3:8)
   
   
   
+  ### Boucle
   
   
-  
-  ## Radar A1
-  
-  
-  # Tableau
-  
-  tb_A1 <- aggregate(df_NS_NNS_9metrics_A1[,tab_indic$indic], by = list(group = df_NS_NNS_9metrics_A1[,"type2"]), FUN = median)
-  tb_A1[,2:ncol(tb_A1)] <- round(tb_A1[,2:ncol(tb_A1)],2)
-  levels(tb_A1$group)[1:6] <- paste("median of", levels(tb_A1$group)[1:6])
-  
-  if(all(tab_indic$out=="oui")){
-    print("Completement hors radar")
-
-    text = "You are off radar for all indicators"
-    data.text <- ggplot() + 
-      ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-      theme_bw() +
-      theme(panel.grid=element_blank(), 
-            panel.background=element_rect(fill = "transparent",colour = NA),
-            panel.border=element_blank(),axis.title.x=element_blank(),
-            axis.text.x=element_blank(),
-            axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-            axis.text.y=element_blank(),
-            axis.ticks.y=element_blank())
+  for(n in 1:length(niveaux)){
     
-    tbl_A1 <- tableGrob(tb_A1, rows=NULL, theme=tt2)
     
-    grid.arrange(myplot, data.text, tbl_A1,
-                 nrow = 3, heights = c(2.75, 0.25, 0.75),
-                 as.table = TRUE,
-                 bottom=textGrob("3", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
+    # Choix niveau
     
-  } else{
-    if(length(tab_indic$out[which(tab_indic$out=="non")]) <3){
+    niv <- niveaux[n]
+    
+    
+    # Tableau correspondant
+    
+    tb <- df_NS_NNS_9metrics[which(df_NS_NNS_9metrics$type2==niv | df_NS_NNS_9metrics$type2=="student"),]
+    
+    tb <- aggregate(tb[,tab_indic$indic], by = list(group = tb[,"type2"]), FUN = median)
+    tb[,2:ncol(tb)] <- round(tb[,2:ncol(tb)],2)
+    levels(tb$group)[1:6] <- paste("median of", levels(tb$group)[1:6])
+    
+    tbl <- tableGrob(tb, rows=NULL, theme=tt2)
+    
+    
+    
+    if(all(tab_indic$out=="oui" | length(tab_indic$out[which(tab_indic$out=="non")]) <3)){
       print("Trop peu d'indicateurs pour afficher un radar (moins de 3)")
-
-      text = "You are off radar for most indicators"
+      
+      if(all(tab_indic$out=="oui")){
+        text = "You are off radar for all indicators"
+      } else {text = "You are off radar for most indicators"}
+      
       data.text <- ggplot() + 
         ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
         theme_bw() +
@@ -301,122 +245,82 @@ viz <- function(student_ID){
               axis.text.y=element_blank(),
               axis.ticks.y=element_blank())
       
-      tbl_A1 <- tableGrob(tb_A1, rows=NULL, theme=tt2)
-      
-      grid.arrange(myplot, data.text, tbl_A1,
+      grid.arrange(im_plot, data.text, tbl,
                    nrow = 3, heights = c(2.75, 0.25, 0.75),
                    as.table = TRUE,
-                   bottom=textGrob("3", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
+                   bottom=textGrob(page[n], x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
       
     } else {
       
-      radar_A1 <- aggregate(df_NS_NNS_9metrics_norm_A1[,tab_indic$indic[which(tab_indic$out=="non")]], by = list(group = df_NS_NNS_9metrics_norm_A1[,"type2"]), FUN = median)
+      dd_norm <- df_NS_NNS_9metrics_norm[which(df_NS_NNS_9metrics_norm$type2==niv | df_NS_NNS_9metrics_norm$type2=="student"),]
       
-      radar_A1_bis <- as.data.frame(t(radar_A1))
-      radar_A1_bis$indic <- row.names(radar_A1_bis)
-      names(radar_A1_bis) <- as.vector(t(radar_A1_bis[1,]))
-      radar_A1_bis <- radar_A1_bis[-1,]
-      rownames(radar_A1_bis) <- 1:nrow(radar_A1_bis)
-      radar_A1_bis$A1 <- as.numeric(as.character(radar_A1_bis$A1))
-      radar_A1_bis$student <- as.numeric(as.character(radar_A1_bis$student))
+      radar <- aggregate(dd_norm[,tab_indic$indic[which(tab_indic$out=="non")]], by = list(group = dd_norm[,"type2"]), FUN = median)
       
-      q1 <- unlist( lapply(df_NS_NNS_9metrics_norm_A1[which(df_NS_NNS_9metrics_norm_A1$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.25))}))
+      radar_bis <- as.data.frame(t(radar))
+      radar_bis$indic <- row.names(radar_bis)
+      names(radar_bis) <- as.vector(t(radar_bis[1,]))
+      radar_bis <- radar_bis[-1,]
+      rownames(radar_bis) <- 1:nrow(radar_bis)
+      radar_bis[,which(names(radar_bis)==niv)] <- as.numeric(as.character(radar_bis[,which(names(radar_bis)==niv)]))
+      radar_bis$student <- as.numeric(as.character(radar_bis$student))
       
-      q3 <- unlist( lapply(df_NS_NNS_9metrics_norm_A1[which(df_NS_NNS_9metrics_norm_A1$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.75))}))
+      q1 <- unlist( lapply(dd_norm[which(dd_norm$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.25))}))
       
-      radar_A1_bis$lower <- q1
-      radar_A1_bis$upper <- q3
+      q3 <- unlist( lapply(dd_norm[which(dd_norm$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.75))}))
       
-      radar_A1_bis <- radar_A1_bis[order(radar_A1_bis$group),]
+      radar_bis$lower <- q1
+      radar_bis$upper <- q3
+      
+      radar_bis <- radar_bis[order(radar_bis$group),]
+      
+      add <- radar_bis[1,]
+      add$group <- NA
+      
+      radar_bis_bis <- rbind(radar_bis,add)
+      
+      p <- radar_bis_bis %>%
+        ggplot(aes(x = group, y = radar_bis_bis[,niv], group = 1)) +
+        geom_ribbon(aes(ymin = lower, ymax = upper, fill = "Q1-Q3 of control group"), alpha = 0.4) +
+        scale_x_discrete(expand = c(0,0), breaks = radar_bis$group) + 
+        geom_line(colour = "black") +
+        geom_point(aes(colour = paste("median of",names(radar_bis_bis)[1], sep = " "))) +
+        theme_light() +
+        theme(panel.grid.minor = element_blank()) + 
+        geom_line(aes(x = group, y = student, group = 1), colour = "orange") +
+        geom_point(aes(x = group, y = student, group = 1, colour = "student")) +
+        geom_ribbon(aes(ymin = -0.10, ymax = -0.01), fill = "white", alpha = 1) +
+        ylim(c(-0.10,1.00)) +
+        geom_text(x=1, y=-0.02, label="0", alpha=0.4) + 
+        geom_text(x=1, y=1.01, label="1") + 
+        coord_radar() +
+        labs(x = "", y = "") +
+        theme(axis.title.y=element_blank(),
+              axis.text.y=element_blank(),
+              axis.ticks.y=element_blank())  + 
+        ggtitle(paste0("Radar chart : Student vs. ", names(radar_bis_bis)[1])) + 
+        theme(plot.title = element_text(hjust = 0.5)) +
+        scale_colour_manual("Group : ", 
+                            breaks = c(paste("median of",names(radar_bis_bis)[1], sep = " "),"student"),
+                            values = c("black", "orange"))  +
+        scale_fill_manual("Colored strip :", 
+                          breaks = c("Q1-Q3 of control group"),
+                          values = c("grey70")) +
+        theme(legend.position="bottom",
+              #legend.box = "vertical",
+              legend.text=element_text(size=12),
+              plot.title=element_text(size=20),
+              axis.text.x = element_text(size = 13)) +
+        guides(color = guide_legend(order = 1))
       
       
       if(all(tab_indic$out=="non")){
         
-        add <- radar_A1_bis[1,]
-        add$group <- NA
-        
-        radar_A1_bis_bis <- rbind(radar_A1_bis,add)
-        
-        p <- radar_A1_bis_bis %>%
-          ggplot(aes(x = group, y = A1, group = 1)) +
-          geom_ribbon(aes(ymin = lower, ymax = upper, fill = "Q1-Q3 of control group"), alpha = 0.4) +
-          scale_x_discrete(expand = c(0,0), breaks = radar_A1_bis$group) + 
-          geom_line(colour = "black") +
-          geom_point(aes(colour = paste("median of",names(radar_A1_bis_bis)[1], sep = " "))) +
-          theme_light() +
-          theme(panel.grid.minor = element_blank()) + 
-          geom_line(aes(x = group, y = student, group = 1), colour = "orange") +
-          geom_point(aes(x = group, y = student, group = 1, colour = "student")) +
-          geom_ribbon(aes(ymin = -0.10, ymax = -0.01), fill = "white", alpha = 1) +
-          ylim(c(-0.10,1.00)) +
-          geom_text(x=1, y=-0.02, label="0", alpha=0.4) + 
-          geom_text(x=1, y=1.01, label="1") + 
-          coord_radar() +
-          labs(x = "", y = "") +
-          theme(axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())  + 
-          ggtitle(paste0("Radar chart : Student vs. ", names(radar_A1_bis_bis)[1])) + 
-          theme(plot.title = element_text(hjust = 0.5)) +
-          scale_colour_manual("Group : ", 
-                              breaks = c(paste("median of",names(radar_A1_bis_bis)[1], sep = " "),"student"),
-                              values = c("black", "orange"))  +
-          scale_fill_manual("Colored strip :", 
-                            breaks = c("Q1-Q3 of control group"),
-                            values = c("grey70")) +
-          theme(legend.position="bottom",
-                #legend.box = "vertical",
-                legend.text=element_text(size=12),
-                plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13)) +
-          guides(color = guide_legend(order = 1))
-        
-        tbl_A1 <- tableGrob(tb_A1, rows=NULL, theme=tt2)
-        
-        grid.arrange(p, tbl_A1,
+        grid.arrange(p, tbl,
                      nrow = 2, heights = c(2, 0.5),
                      as.table = TRUE,
-                     bottom=textGrob("3", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
+                     bottom=textGrob(page[n], x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
         
       } else {
-        
-        add <- radar_A1_bis[1,]
-        add$group <- NA
-        
-        radar_A1_bis_bis <- rbind(radar_A1_bis,add)
-        
-        p <- radar_A1_bis_bis %>%
-          ggplot(aes(x = group, y = A1, group = 1)) +
-          geom_ribbon(aes(ymin = lower, ymax = upper, fill = "Q1-Q3 of control group"), alpha = 0.4) +
-          scale_x_discrete(expand = c(0,0), breaks = radar_A1_bis$group) + 
-          geom_line(colour = "black") +
-          geom_point(aes(colour = paste("median of",names(radar_A1_bis_bis)[1], sep = " "))) +
-          theme_light() +
-          theme(panel.grid.minor = element_blank()) + 
-          geom_line(aes(x = group, y = student, group = 1), colour = "orange") +
-          geom_point(aes(x = group, y = student, group = 1, colour = "student")) +
-          geom_ribbon(aes(ymin = -0.10, ymax = -0.01), fill = "white", alpha = 1) +
-          ylim(c(-0.10,1.00)) +
-          geom_text(x=1, y=-0.02, label="0", alpha=0.4) + 
-          geom_text(x=1, y=1.01, label="1") + 
-          coord_radar() +
-          labs(x = "", y = "") +
-          theme(axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())  + 
-          ggtitle(paste0("Radar chart : Student vs. ", names(radar_A1_bis_bis)[1])) + 
-          theme(plot.title = element_text(hjust = 0.5)) +
-          scale_colour_manual("Group : ", 
-                              breaks = c(paste("median of",names(radar_A1_bis_bis)[1], sep = " "),"student"),
-                              values = c("black", "orange"))  +
-          scale_fill_manual("Colored strip :", 
-                            breaks = c("Q1-Q3 of control group"),
-                            values = c("grey70")) +
-          theme(legend.position="bottom",
-                legend.text=element_text(size=12),
-                plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13)) +
-          guides(color = guide_legend(order = 1)) 
         
         text = paste("You are off radar for the following indicators :", paste(tab_indic$indic[which(tab_indic$out=="oui")],collapse=", "), sep = " ")
         data.text <- ggplot() + 
@@ -430,994 +334,31 @@ viz <- function(student_ID){
                 axis.text.y=element_blank(),
                 axis.ticks.y=element_blank())
         
-        tbl_A1 <- tableGrob(tb_A1, rows=NULL, theme=tt2)
-        
-        grid.arrange(p, data.text, tbl_A1,
+        grid.arrange(p, data.text, tbl,
                      nrow = 3, heights = c(2.75, 0.25, 0.75),
                      as.table = TRUE,
-                     bottom=textGrob("3", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
+                     bottom=textGrob(page[n], x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
         
       }
       
     }
   }
-  
-  
-  
-  
-  
-  ## Radar A2
-  
-  
-  # Tableau
-  
-  tb_A2 <- aggregate(df_NS_NNS_9metrics_A2[,tab_indic$indic], by = list(group = df_NS_NNS_9metrics_A2[,"type2"]), FUN = median)
-  tb_A2[,2:ncol(tb_A2)] <- round(tb_A2[,2:ncol(tb_A2)],2)
-  levels(tb_A2$group)[1:6] <- paste("median of", levels(tb_A2$group)[1:6])
-  
-  if(all(tab_indic$out=="oui")){
-    print("Completement hors radar")
-
-    text = "You are off radar for all indicators"
-    data.text <- ggplot() + 
-      ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-      theme_bw() +
-      theme(panel.grid=element_blank(), 
-            panel.background=element_rect(fill = "transparent",colour = NA),
-            panel.border=element_blank(),axis.title.x=element_blank(),
-            axis.text.x=element_blank(),
-            axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-            axis.text.y=element_blank(),
-            axis.ticks.y=element_blank())
-    
-    tbl_A2 <- tableGrob(tb_A2, rows=NULL, theme=tt2)
-    
-    grid.arrange(myplot, data.text, tbl_A2,
-                 nrow = 3, heights = c(2.75, 0.25, 0.75),
-                 as.table = TRUE,
-                 bottom=textGrob("4", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-    
-  } else{
-    if(length(tab_indic$out[which(tab_indic$out=="non")]) <3){
-      print("Trop peu d'indicateurs pour afficher un radar (moins de 3)")
-
-      text = "You are off radar for most indicators"
-      data.text <- ggplot() + 
-        ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-        theme_bw() +
-        theme(panel.grid=element_blank(), 
-              panel.background=element_rect(fill = "transparent",colour = NA),
-              panel.border=element_blank(),axis.title.x=element_blank(),
-              axis.text.x=element_blank(),
-              axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-              axis.text.y=element_blank(),
-              axis.ticks.y=element_blank())
-      
-      tbl_A2 <- tableGrob(tb_A2, rows=NULL, theme=tt2)
-      
-      grid.arrange(myplot, data.text, tbl_A2,
-                   nrow = 3, heights = c(2.75, 0.25, 0.75),
-                   as.table = TRUE,
-                   bottom=textGrob("4", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-      
-    } else {
-      
-      radar_A2 <- aggregate(df_NS_NNS_9metrics_norm_A2[,tab_indic$indic[which(tab_indic$out=="non")]], by = list(group = df_NS_NNS_9metrics_norm_A2[,"type2"]), FUN = median)
-      
-      radar_A2_bis <- as.data.frame(t(radar_A2))
-      radar_A2_bis$indic <- row.names(radar_A2_bis)
-      names(radar_A2_bis) <- as.vector(t(radar_A2_bis[1,]))
-      radar_A2_bis <- radar_A2_bis[-1,]
-      rownames(radar_A2_bis) <- 1:nrow(radar_A2_bis)
-      radar_A2_bis$A2 <- as.numeric(as.character(radar_A2_bis$A2))
-      radar_A2_bis$student <- as.numeric(as.character(radar_A2_bis$student))
-      
-      q1 <- unlist( lapply(df_NS_NNS_9metrics_norm_A2[which(df_NS_NNS_9metrics_norm_A2$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.25))}))
-      
-      q3 <- unlist( lapply(df_NS_NNS_9metrics_norm_A2[which(df_NS_NNS_9metrics_norm_A2$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.75))}))
-      
-      radar_A2_bis$lower <- q1
-      radar_A2_bis$upper <- q3
-      
-      radar_A2_bis <- radar_A2_bis[order(radar_A2_bis$group),]
-      
-      
-      if(all(tab_indic$out=="non")){
-        
-        add <- radar_A2_bis[1,]
-        add$group <- NA
-        
-        radar_A2_bis_bis <- rbind(radar_A2_bis,add)
-        
-        p <- radar_A2_bis_bis %>%
-          ggplot(aes(x = group, y = A2, group = 1)) +
-          geom_ribbon(aes(ymin = lower, ymax = upper, fill = "Q1-Q3 of control group"), alpha = 0.4) +
-          scale_x_discrete(expand = c(0,0), breaks = radar_A2_bis$group) + 
-          geom_line(colour = "black") +
-          geom_point(aes(colour = paste("median of",names(radar_A2_bis_bis)[1], sep = " "))) +
-          theme_light() +
-          theme(panel.grid.minor = element_blank()) + 
-          geom_line(aes(x = group, y = student, group = 1), colour = "orange") +
-          geom_point(aes(x = group, y = student, group = 1, colour = "student")) +
-          geom_ribbon(aes(ymin = -0.10, ymax = -0.01), fill = "white", alpha = 1) +
-          ylim(c(-0.10,1.00)) +
-          geom_text(x=1, y=-0.02, label="0", alpha=0.4) + 
-          geom_text(x=1, y=1.01, label="1") + 
-          coord_radar() +
-          labs(x = "", y = "") +
-          theme(axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())  + 
-          ggtitle(paste0("Radar chart : Student vs. ", names(radar_A2_bis_bis)[1])) + 
-          theme(plot.title = element_text(hjust = 0.5)) +
-          scale_colour_manual("Group : ", 
-                              breaks = c(paste("median of",names(radar_A2_bis_bis)[1], sep = " "),"student"),
-                              values = c("black", "orange"))  +
-          scale_fill_manual("Colored strip :", 
-                            breaks = c("Q1-Q3 of control group"),
-                            values = c("grey70")) +
-          theme(legend.position="bottom",
-                legend.text=element_text(size=12),
-                plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13))  +
-          guides(color = guide_legend(order = 1))
-        
-        tbl_A2 <- tableGrob(tb_A2, rows=NULL, theme=tt2)
-        
-        grid.arrange(p, tbl_A2,
-                     nrow = 2, heights = c(2, 0.5),
-                     as.table = TRUE,
-                     bottom=textGrob("4", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-        
-      } else {
-        
-        add <- radar_A2_bis[1,]
-        add$group <- NA
-        
-        radar_A2_bis_bis <- rbind(radar_A2_bis,add)
-        
-        p <- radar_A2_bis_bis %>%
-          ggplot(aes(x = group, y = A2, group = 1)) +
-          geom_ribbon(aes(ymin = lower, ymax = upper, fill = "Q1-Q3 of control group"), alpha = 0.4) +
-          scale_x_discrete(expand = c(0,0), breaks = radar_A2_bis$group) + 
-          geom_line(colour = "black") +
-          geom_point(aes(colour = paste("median of",names(radar_A2_bis_bis)[1], sep = " "))) +
-          theme_light() +
-          theme(panel.grid.minor = element_blank()) + 
-          geom_line(aes(x = group, y = student, group = 1), colour = "orange") +
-          geom_point(aes(x = group, y = student, group = 1, colour = "student")) +
-          geom_ribbon(aes(ymin = -0.10, ymax = -0.01), fill = "white", alpha = 1) +
-          ylim(c(-0.10,1.00)) +
-          geom_text(x=1, y=-0.02, label="0", alpha=0.4) + 
-          geom_text(x=1, y=1.01, label="1") + 
-          coord_radar() +
-          labs(x = "", y = "") +
-          theme(axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())  + 
-          ggtitle(paste0("Radar chart : Student vs. ", names(radar_A2_bis_bis)[1])) + 
-          theme(plot.title = element_text(hjust = 0.5)) +
-          scale_colour_manual("Group : ", 
-                              breaks = c(paste("median of",names(radar_A2_bis_bis)[1], sep = " "),"student"),
-                              values = c("black", "orange"))  +
-          scale_fill_manual("Colored strip :", 
-                            breaks = c("Q1-Q3 of control group"),
-                            values = c("grey70")) +
-          theme(legend.position="bottom",
-                legend.text=element_text(size=12),
-                plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13))  +
-          guides(color = guide_legend(order = 1))
-        
-        text = paste("You are off radar for the following indicators :", paste(tab_indic$indic[which(tab_indic$out=="oui")],collapse=", "), sep = " ")
-        data.text <- ggplot() + 
-          ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-          theme_bw() +
-          theme(panel.grid=element_blank(), 
-                panel.background=element_rect(fill = "transparent",colour = NA),
-                panel.border=element_blank(),axis.title.x=element_blank(),
-                axis.text.x=element_blank(),
-                axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())
-        
-        tbl_A2 <- tableGrob(tb_A2, rows=NULL, theme=tt2)
-        
-        grid.arrange(p, data.text, tbl_A2,
-                     nrow = 3, heights = c(2.75, 0.25, 0.75),
-                     as.table = TRUE,
-                     bottom=textGrob("4", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-        
-      }
-      
-    }
-  }
-  
-  
-  
-  ## Radar B1
-  
-  
-  # Tableau
-  
-  tb_B1 <- aggregate(df_NS_NNS_9metrics_B1[,tab_indic$indic], by = list(group = df_NS_NNS_9metrics_B1[,"type2"]), FUN = median)
-  tb_B1[,2:ncol(tb_B1)] <- round(tb_B1[,2:ncol(tb_B1)],2)
-  levels(tb_B1$group)[1:6] <- paste("median of", levels(tb_B1$group)[1:6])
-  
-  if(all(tab_indic$out=="oui")){
-    print("Completement hors radar")
-
-    text = "You are off radar for all indicators"
-    data.text <- ggplot() + 
-      ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-      theme_bw() +
-      theme(panel.grid=element_blank(), 
-            panel.background=element_rect(fill = "transparent",colour = NA),
-            panel.border=element_blank(),axis.title.x=element_blank(),
-            axis.text.x=element_blank(),
-            axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-            axis.text.y=element_blank(),
-            axis.ticks.y=element_blank())
-    
-    tbl_B1 <- tableGrob(tb_B1, rows=NULL, theme=tt2)
-    
-    grid.arrange(myplot, data.text, tbl_B1,
-                 nrow = 3, heights = c(2.75, 0.25, 0.75),
-                 as.table = TRUE,
-                 bottom=textGrob("5", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-    
-  } else{
-    if(length(tab_indic$out[which(tab_indic$out=="non")]) <3){
-      print("Trop peu d'indicateurs pour afficher un radar (moins de 3)")
-
-      text = "You are off radar for most indicators"
-      data.text <- ggplot() + 
-        ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-        theme_bw() +
-        theme(panel.grid=element_blank(), 
-              panel.background=element_rect(fill = "transparent",colour = NA),
-              panel.border=element_blank(),axis.title.x=element_blank(),
-              axis.text.x=element_blank(),
-              axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-              axis.text.y=element_blank(),
-              axis.ticks.y=element_blank())
-      
-      tbl_B1 <- tableGrob(tb_B1, rows=NULL, theme=tt2)
-      
-      grid.arrange(myplot, data.text, tbl_B1,
-                   nrow = 3, heights = c(2.75, 0.25, 0.75),
-                   as.table = TRUE,
-                   bottom=textGrob("5", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-      
-    } else {
-      
-      radar_B1 <- aggregate(df_NS_NNS_9metrics_norm_B1[,tab_indic$indic[which(tab_indic$out=="non")]], by = list(group = df_NS_NNS_9metrics_norm_B1[,"type2"]), FUN = median)
-      
-      radar_B1_bis <- as.data.frame(t(radar_B1))
-      radar_B1_bis$indic <- row.names(radar_B1_bis)
-      names(radar_B1_bis) <- as.vector(t(radar_B1_bis[1,]))
-      radar_B1_bis <- radar_B1_bis[-1,]
-      rownames(radar_B1_bis) <- 1:nrow(radar_B1_bis)
-      radar_B1_bis$B1 <- as.numeric(as.character(radar_B1_bis$B1))
-      radar_B1_bis$student <- as.numeric(as.character(radar_B1_bis$student))
-      
-      q1 <- unlist( lapply(df_NS_NNS_9metrics_norm_B1[which(df_NS_NNS_9metrics_norm_B1$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.25))}))
-      
-      q3 <- unlist( lapply(df_NS_NNS_9metrics_norm_B1[which(df_NS_NNS_9metrics_norm_B1$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.75))}))
-      
-      radar_B1_bis$lower <- q1
-      radar_B1_bis$upper <- q3
-      
-      radar_B1_bis <- radar_B1_bis[order(radar_B1_bis$group),]
-      
-      
-      if(all(tab_indic$out=="non")){
-        
-        add <- radar_B1_bis[1,]
-        add$group <- NA
-        
-        radar_B1_bis_bis <- rbind(radar_B1_bis,add)
-        
-        p <- radar_B1_bis_bis %>%
-          ggplot(aes(x = group, y = B1, group = 1)) +
-          geom_ribbon(aes(ymin = lower, ymax = upper, fill = "Q1-Q3 of control group"), alpha = 0.4) +
-          scale_x_discrete(expand = c(0,0), breaks = radar_B1_bis$group) + 
-          geom_line(colour = "black") +
-          geom_point(aes(colour = paste("median of",names(radar_B1_bis_bis)[1], sep = " "))) +
-          theme_light() +
-          theme(panel.grid.minor = element_blank()) + 
-          geom_line(aes(x = group, y = student, group = 1), colour = "orange") +
-          geom_point(aes(x = group, y = student, group = 1, colour = "student")) +
-          geom_ribbon(aes(ymin = -0.10, ymax = -0.01), fill = "white", alpha = 1) +
-          ylim(c(-0.10,1.00)) +
-          geom_text(x=1, y=-0.02, label="0", alpha=0.4) + 
-          geom_text(x=1, y=1.01, label="1") + 
-          coord_radar() +
-          labs(x = "", y = "") +
-          theme(axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())  + 
-          ggtitle(paste0("Radar chart : Student vs. ", names(radar_B1_bis_bis)[1])) + 
-          theme(plot.title = element_text(hjust = 0.5)) +
-          scale_colour_manual("Group : ", 
-                              breaks = c(paste("median of",names(radar_B1_bis_bis)[1], sep = " "),"student"),
-                              values = c("black", "orange"))  +
-          scale_fill_manual("Colored strip :", 
-                            breaks = c("Q1-Q3 of control group"),
-                            values = c("grey70")) +
-          theme(legend.position="bottom",
-                legend.text=element_text(size=12),
-                plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13))  +
-          guides(color = guide_legend(order = 1))
-        
-        tbl_B1 <- tableGrob(tb_B1, rows=NULL, theme=tt2)
-        
-        grid.arrange(p, tbl_B1,
-                     nrow = 2, heights = c(2, 0.5),
-                     as.table = TRUE,
-                     bottom=textGrob("5", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-        
-      } else {
-        
-        add <- radar_B1_bis[1,]
-        add$group <- NA
-        
-        radar_B1_bis_bis <- rbind(radar_B1_bis,add)
-        
-        p <- radar_B1_bis_bis %>%
-          ggplot(aes(x = group, y = B1, group = 1)) +
-          geom_ribbon(aes(ymin = lower, ymax = upper, fill = "Q1-Q3 of control group"), alpha = 0.4) +
-          scale_x_discrete(expand = c(0,0), breaks = radar_B1_bis$group) + 
-          geom_line(colour = "black") +
-          geom_point(aes(colour = paste("median of",names(radar_B1_bis_bis)[1], sep = " "))) +
-          theme_light() +
-          theme(panel.grid.minor = element_blank()) + 
-          geom_line(aes(x = group, y = student, group = 1), colour = "orange") +
-          geom_point(aes(x = group, y = student, group = 1, colour = "student")) +
-          geom_ribbon(aes(ymin = -0.10, ymax = -0.01), fill = "white", alpha = 1) +
-          ylim(c(-0.10,1.00)) +
-          geom_text(x=1, y=-0.02, label="0", alpha=0.4) + 
-          geom_text(x=1, y=1.01, label="1") + 
-          coord_radar() +
-          labs(x = "", y = "") +
-          theme(axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())  + 
-          ggtitle(paste0("Radar chart : Student vs. ", names(radar_B1_bis_bis)[1])) + 
-          theme(plot.title = element_text(hjust = 0.5)) +
-          scale_colour_manual("Group : ", 
-                              breaks = c(paste("median of",names(radar_B1_bis_bis)[1], sep = " "),"student"),
-                              values = c("black", "orange"))  +
-          scale_fill_manual("Colored strip :", 
-                            breaks = c("Q1-Q3 of control group"),
-                            values = c("grey70")) +
-          theme(legend.position="bottom",
-                legend.text=element_text(size=12),
-                plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13))  +
-          guides(color = guide_legend(order = 1))
-        
-        text = paste("You are off radar for the following indicators :", paste(tab_indic$indic[which(tab_indic$out=="oui")],collapse=", "), sep = " ")
-        data.text <- ggplot() + 
-          ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-          theme_bw() +
-          theme(panel.grid=element_blank(), 
-                panel.background=element_rect(fill = "transparent",colour = NA),
-                panel.border=element_blank(),axis.title.x=element_blank(),
-                axis.text.x=element_blank(),
-                axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())
-        
-        tbl_B1 <- tableGrob(tb_B1, rows=NULL, theme=tt2)
-        
-        grid.arrange(p, data.text, tbl_B1,
-                     nrow = 3, heights = c(2.75, 0.25, 0.75),
-                     as.table = TRUE,
-                     bottom=textGrob("5", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-        
-      }
-      
-    }
-  }
-  
-  
-  
-  
-  
-  ## Radar B2
-  
-  
-  # Tableau
-  
-  tb_B2 <- aggregate(df_NS_NNS_9metrics_B2[,tab_indic$indic], by = list(group = df_NS_NNS_9metrics_B2[,"type2"]), FUN = median)
-  tb_B2[,2:ncol(tb_B2)] <- round(tb_B2[,2:ncol(tb_B2)],2)
-  levels(tb_B2$group)[1:6] <- paste("median of", levels(tb_B2$group)[1:6])
-  
-  if(all(tab_indic$out=="oui")){
-    print("Completement hors radar")
-
-    text = "You are off radar for all indicators"
-    data.text <- ggplot() + 
-      ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-      theme_bw() +
-      theme(panel.grid=element_blank(), 
-            panel.background=element_rect(fill = "transparent",colour = NA),
-            panel.border=element_blank(),axis.title.x=element_blank(),
-            axis.text.x=element_blank(),
-            axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-            axis.text.y=element_blank(),
-            axis.ticks.y=element_blank())
-    
-    tbl_B2 <- tableGrob(tb_B2, rows=NULL, theme=tt2)
-    
-    grid.arrange(myplot, data.text, tbl_B2,
-                 nrow = 3, heights = c(2.75, 0.25, 0.75),
-                 as.table = TRUE,
-                 bottom=textGrob("6", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-    
-  } else{
-    if(length(tab_indic$out[which(tab_indic$out=="non")]) <3){
-      print("Trop peu d'indicateurs pour afficher un radar (moins de 3)")
-
-      text = "You are off radar for most indicators"
-      data.text <- ggplot() + 
-        ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-        theme_bw() +
-        theme(panel.grid=element_blank(), 
-              panel.background=element_rect(fill = "transparent",colour = NA),
-              panel.border=element_blank(),axis.title.x=element_blank(),
-              axis.text.x=element_blank(),
-              axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-              axis.text.y=element_blank(),
-              axis.ticks.y=element_blank())
-      
-      tbl_B2 <- tableGrob(tb_B2, rows=NULL, theme=tt2)
-      
-      grid.arrange(myplot, data.text, tbl_B2,
-                   nrow = 3, heights = c(2.75, 0.25, 0.75),
-                   as.table = TRUE,
-                   bottom=textGrob("6", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-      
-    } else {
-      
-      radar_B2 <- aggregate(df_NS_NNS_9metrics_norm_B2[,tab_indic$indic[which(tab_indic$out=="non")]], by = list(group = df_NS_NNS_9metrics_norm_B2[,"type2"]), FUN = median)
-      
-      radar_B2_bis <- as.data.frame(t(radar_B2))
-      radar_B2_bis$indic <- row.names(radar_B2_bis)
-      names(radar_B2_bis) <- as.vector(t(radar_B2_bis[1,]))
-      radar_B2_bis <- radar_B2_bis[-1,]
-      rownames(radar_B2_bis) <- 1:nrow(radar_B2_bis)
-      radar_B2_bis$B2 <- as.numeric(as.character(radar_B2_bis$B2))
-      radar_B2_bis$student <- as.numeric(as.character(radar_B2_bis$student))
-      
-      q1 <- unlist( lapply(df_NS_NNS_9metrics_norm_B2[which(df_NS_NNS_9metrics_norm_B2$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.25))}))
-      
-      q3 <- unlist( lapply(df_NS_NNS_9metrics_norm_B2[which(df_NS_NNS_9metrics_norm_B2$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.75))}))
-      
-      radar_B2_bis$lower <- q1
-      radar_B2_bis$upper <- q3
-      
-      radar_B2_bis <- radar_B2_bis[order(radar_B2_bis$group),]
-      
-      
-      if(all(tab_indic$out=="non")){
-        
-        add <- radar_B2_bis[1,]
-        add$group <- NA
-        
-        radar_B2_bis_bis <- rbind(radar_B2_bis,add)
-        
-        p <- radar_B2_bis_bis %>%
-          ggplot(aes(x = group, y = B2, group = 1)) +
-          geom_ribbon(aes(ymin = lower, ymax = upper, fill = "Q1-Q3 of control group"), alpha = 0.4) +
-          scale_x_discrete(expand = c(0,0), breaks = radar_B2_bis$group) + 
-          geom_line(colour = "black") +
-          geom_point(aes(colour = paste("median of",names(radar_B2_bis_bis)[1], sep = " "))) +
-          theme_light() +
-          theme(panel.grid.minor = element_blank()) + 
-          geom_line(aes(x = group, y = student, group = 1), colour = "orange") +
-          geom_point(aes(x = group, y = student, group = 1, colour = "student")) +
-          geom_ribbon(aes(ymin = -0.10, ymax = -0.01), fill = "white", alpha = 1) +
-          ylim(c(-0.10,1.00)) +
-          geom_text(x=1, y=-0.02, label="0", alpha=0.4) + 
-          geom_text(x=1, y=1.01, label="1") + 
-          coord_radar() +
-          labs(x = "", y = "") +
-          theme(axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())  + 
-          ggtitle(paste0("Radar chart : Student vs. ", names(radar_B2_bis_bis)[1])) + 
-          theme(plot.title = element_text(hjust = 0.5)) +
-          scale_colour_manual("Group : ", 
-                              breaks = c(paste("median of",names(radar_B2_bis_bis)[1], sep = " "),"student"),
-                              values = c("black", "orange"))  +
-          scale_fill_manual("Colored strip :", 
-                            breaks = c("Q1-Q3 of control group"),
-                            values = c("grey70")) +
-          theme(legend.position="bottom",
-                legend.text=element_text(size=12),
-                plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13))  +
-          guides(color = guide_legend(order = 1))
-        
-        tbl_B2 <- tableGrob(tb_B2, rows=NULL, theme=tt2)
-        
-        grid.arrange(p, tbl_B2,
-                     nrow = 2, heights = c(2, 0.5),
-                     as.table = TRUE,
-                     bottom=textGrob("6", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-        
-      } else {
-        
-        add <- radar_B2_bis[1,]
-        add$group <- NA
-        
-        radar_B2_bis_bis <- rbind(radar_B2_bis,add)
-        
-        p <- radar_B2_bis_bis %>%
-          ggplot(aes(x = group, y = B2, group = 1)) +
-          geom_ribbon(aes(ymin = lower, ymax = upper, fill = "Q1-Q3 of control group"), alpha = 0.4) +
-          scale_x_discrete(expand = c(0,0), breaks = radar_B2_bis$group) + 
-          geom_line(colour = "black") +
-          geom_point(aes(colour = paste("median of",names(radar_B2_bis_bis)[1], sep = " "))) +
-          theme_light() +
-          theme(panel.grid.minor = element_blank()) + 
-          geom_line(aes(x = group, y = student, group = 1), colour = "orange") +
-          geom_point(aes(x = group, y = student, group = 1, colour = "student")) +
-          geom_ribbon(aes(ymin = -0.10, ymax = -0.01), fill = "white", alpha = 1) +
-          ylim(c(-0.10,1.00)) +
-          geom_text(x=1, y=-0.02, label="0", alpha=0.4) + 
-          geom_text(x=1, y=1.01, label="1") + 
-          coord_radar() +
-          labs(x = "", y = "") +
-          theme(axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())  + 
-          ggtitle(paste0("Radar chart : Student vs. ", names(radar_B2_bis_bis)[1])) + 
-          theme(plot.title = element_text(hjust = 0.5)) +
-          scale_colour_manual("Group : ", 
-                              breaks = c(paste("median of",names(radar_B2_bis_bis)[1], sep = " "),"student"),
-                              values = c("black", "orange"))  +
-          scale_fill_manual("Colored strip :", 
-                            breaks = c("Q1-Q3 of control group"),
-                            values = c("grey70")) +
-          theme(legend.position="bottom",
-                legend.text=element_text(size=12),
-                plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13))  +
-          guides(color = guide_legend(order = 1))
-        
-        text = paste("You are off radar for the following indicators :", paste(tab_indic$indic[which(tab_indic$out=="oui")],collapse=", "), sep = " ")
-        data.text <- ggplot() + 
-          ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-          theme_bw() +
-          theme(panel.grid=element_blank(), 
-                panel.background=element_rect(fill = "transparent",colour = NA),
-                panel.border=element_blank(),axis.title.x=element_blank(),
-                axis.text.x=element_blank(),
-                axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())
-        
-        tbl_B2 <- tableGrob(tb_B2, rows=NULL, theme=tt2)
-        
-        grid.arrange(p, data.text, tbl_B2,
-                     nrow = 3, heights = c(2.75, 0.25, 0.75),
-                     as.table = TRUE,
-                     bottom=textGrob("6", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-        
-      }
-      
-    }
-  }
-  
-  
-  
-  
-  
-  
-  ## Radar C1
-  
-  
-  # Tableau
-  
-  tb_C1 <- aggregate(df_NS_NNS_9metrics_C1[,tab_indic$indic], by = list(group = df_NS_NNS_9metrics_C1[,"type2"]), FUN = median)
-  tb_C1[,2:ncol(tb_C1)] <- round(tb_C1[,2:ncol(tb_C1)],2)
-  levels(tb_C1$group)[1:6] <- paste("median of", levels(tb_C1$group)[1:6])
-  
-  if(all(tab_indic$out=="oui")){
-    print("Completement hors radar")
-
-    text = "You are off radar for all indicators"
-    data.text <- ggplot() + 
-      ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-      theme_bw() +
-      theme(panel.grid=element_blank(), 
-            panel.background=element_rect(fill = "transparent",colour = NA),
-            panel.border=element_blank(),axis.title.x=element_blank(),
-            axis.text.x=element_blank(),
-            axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-            axis.text.y=element_blank(),
-            axis.ticks.y=element_blank())
-    
-    tbl_C1 <- tableGrob(tb_C1, rows=NULL, theme=tt2)
-    
-    grid.arrange(myplot, data.text, tbl_C1,
-                 nrow = 3, heights = c(2.75, 0.25, 0.75),
-                 as.table = TRUE,
-                 bottom=textGrob("7", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-    
-  } else{
-    if(length(tab_indic$out[which(tab_indic$out=="non")]) <3){
-      print("Trop peu d'indicateurs pour afficher un radar (moins de 3)")
-
-      text = "You are off radar for most indicators"
-      data.text <- ggplot() + 
-        ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-        theme_bw() +
-        theme(panel.grid=element_blank(), 
-              panel.background=element_rect(fill = "transparent",colour = NA),
-              panel.border=element_blank(),axis.title.x=element_blank(),
-              axis.text.x=element_blank(),
-              axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-              axis.text.y=element_blank(),
-              axis.ticks.y=element_blank())
-      
-      tbl_C1 <- tableGrob(tb_C1, rows=NULL, theme=tt2)
-      
-      grid.arrange(myplot, data.text, tbl_C1,
-                   nrow = 3, heights = c(2.75, 0.25, 0.75),
-                   as.table = TRUE,
-                   bottom=textGrob("7", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-      
-    } else {
-      
-      radar_C1 <- aggregate(df_NS_NNS_9metrics_norm_C1[,tab_indic$indic[which(tab_indic$out=="non")]], by = list(group = df_NS_NNS_9metrics_norm_C1[,"type2"]), FUN = median)
-      
-      radar_C1_bis <- as.data.frame(t(radar_C1))
-      radar_C1_bis$indic <- row.names(radar_C1_bis)
-      names(radar_C1_bis) <- as.vector(t(radar_C1_bis[1,]))
-      radar_C1_bis <- radar_C1_bis[-1,]
-      rownames(radar_C1_bis) <- 1:nrow(radar_C1_bis)
-      radar_C1_bis$C1 <- as.numeric(as.character(radar_C1_bis$C1))
-      radar_C1_bis$student <- as.numeric(as.character(radar_C1_bis$student))
-      
-      q1 <- unlist( lapply(df_NS_NNS_9metrics_norm_C1[which(df_NS_NNS_9metrics_norm_C1$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.25))}))
-      
-      q3 <- unlist( lapply(df_NS_NNS_9metrics_norm_C1[which(df_NS_NNS_9metrics_norm_C1$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.75))}))
-      
-      radar_C1_bis$lower <- q1
-      radar_C1_bis$upper <- q3
-      
-      radar_C1_bis <- radar_C1_bis[order(radar_C1_bis$group),]
-      
-      
-      if(all(tab_indic$out=="non")){
-        
-        add <- radar_C1_bis[1,]
-        add$group <- NA
-        
-        radar_C1_bis_bis <- rbind(radar_C1_bis,add)
-        
-        p <- radar_C1_bis_bis %>%
-          ggplot(aes(x = group, y = C1, group = 1)) +
-          geom_ribbon(aes(ymin = lower, ymax = upper, fill = "Q1-Q3 of control group"), alpha = 0.4) +
-          scale_x_discrete(expand = c(0,0), breaks = radar_C1_bis$group) + 
-          geom_line(colour = "black") +
-          geom_point(aes(colour = paste("median of",names(radar_C1_bis_bis)[1], sep = " "))) +
-          theme_light() +
-          theme(panel.grid.minor = element_blank()) + 
-          geom_line(aes(x = group, y = student, group = 1), colour = "orange") +
-          geom_point(aes(x = group, y = student, group = 1, colour = "student")) +
-          geom_ribbon(aes(ymin = -0.10, ymax = -0.01), fill = "white", alpha = 1) +
-          ylim(c(-0.10,1.00)) +
-          geom_text(x=1, y=-0.02, label="0", alpha=0.4) + 
-          geom_text(x=1, y=1.01, label="1") + 
-          coord_radar() +
-          labs(x = "", y = "") +
-          theme(axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())  + 
-          ggtitle(paste0("Radar chart : Student vs. ", names(radar_C1_bis_bis)[1])) + 
-          theme(plot.title = element_text(hjust = 0.5)) +
-          scale_colour_manual("Group : ", 
-                              breaks = c(paste("median of",names(radar_C1_bis_bis)[1], sep = " "),"student"),
-                              values = c("black", "orange"))  +
-          scale_fill_manual("Colored strip :", 
-                            breaks = c("Q1-Q3 of control group"),
-                            values = c("grey70")) +
-          theme(legend.position="bottom",
-                legend.text=element_text(size=12),
-                plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13))  +
-          guides(color = guide_legend(order = 1))
-        
-        tbl_C1 <- tableGrob(tb_C1, rows=NULL, theme=tt2)
-        
-        grid.arrange(p, tbl_C1,
-                     nrow = 2, heights = c(2, 0.5),
-                     as.table = TRUE,
-                     bottom=textGrob("7", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-        
-      } else {
-        
-        add <- radar_C1_bis[1,]
-        add$group <- NA
-        
-        radar_C1_bis_bis <- rbind(radar_C1_bis,add)
-        
-        p <- radar_C1_bis_bis %>%
-          ggplot(aes(x = group, y = C1, group = 1)) +
-          geom_ribbon(aes(ymin = lower, ymax = upper, fill = "Q1-Q3 of control group"), alpha = 0.4) +
-          scale_x_discrete(expand = c(0,0), breaks = radar_C1_bis$group) + 
-          geom_line(colour = "black") +
-          geom_point(aes(colour = paste("median of",names(radar_C1_bis_bis)[1], sep = " "))) +
-          theme_light() +
-          theme(panel.grid.minor = element_blank()) + 
-          geom_line(aes(x = group, y = student, group = 1), colour = "orange") +
-          geom_point(aes(x = group, y = student, group = 1, colour = "student")) +
-          geom_ribbon(aes(ymin = -0.10, ymax = -0.01), fill = "white", alpha = 1) +
-          ylim(c(-0.10,1.00)) +
-          geom_text(x=1, y=-0.02, label="0", alpha=0.4) + 
-          geom_text(x=1, y=1.01, label="1") + 
-          coord_radar() +
-          labs(x = "", y = "") +
-          theme(axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())  + 
-          ggtitle(paste0("Radar chart : Student vs. ", names(radar_C1_bis_bis)[1])) + 
-          theme(plot.title = element_text(hjust = 0.5)) +
-          scale_colour_manual("Group : ", 
-                              breaks = c(paste("median of",names(radar_C1_bis_bis)[1], sep = " "),"student"),
-                              values = c("black", "orange"))  +
-          scale_fill_manual("Colored strip :", 
-                            breaks = c("Q1-Q3 of control group"),
-                            values = c("grey70")) +
-          theme(legend.position="bottom",
-                legend.text=element_text(size=12),
-                plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13))  +
-          guides(color = guide_legend(order = 1))
-        
-        text = paste("You are off radar for the following indicators :", paste(tab_indic$indic[which(tab_indic$out=="oui")],collapse=", "), sep = " ")
-        data.text <- ggplot() + 
-          ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-          theme_bw() +
-          theme(panel.grid=element_blank(), 
-                panel.background=element_rect(fill = "transparent",colour = NA),
-                panel.border=element_blank(),axis.title.x=element_blank(),
-                axis.text.x=element_blank(),
-                axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())
-        
-        tbl_C1 <- tableGrob(tb_C1, rows=NULL, theme=tt2)
-        
-        grid.arrange(p, data.text, tbl_C1,
-                     nrow = 3, heights = c(2.75, 0.25, 0.75),
-                     as.table = TRUE,
-                     bottom=textGrob("7", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-        
-      }
-      
-    }
-  }
-  
-  
-  
-  
-  
-  ## Radar C2
-  
-  
-  # Tableau
-  
-  tb_C2 <- aggregate(df_NS_NNS_9metrics_C2[,tab_indic$indic], by = list(group = df_NS_NNS_9metrics_C2[,"type2"]), FUN = median)
-  tb_C2[,2:ncol(tb_C2)] <- round(tb_C2[,2:ncol(tb_C2)],2)
-  levels(tb_C2$group)[1:6] <- paste("median of", levels(tb_C2$group)[1:6])
-  
-  if(all(tab_indic$out=="oui")){
-    print("Completement hors radar")
-
-    text = "You are off radar for all indicators"
-    data.text <- ggplot() + 
-      ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-      theme_bw() +
-      theme(panel.grid=element_blank(), 
-            panel.background=element_rect(fill = "transparent",colour = NA),
-            panel.border=element_blank(),axis.title.x=element_blank(),
-            axis.text.x=element_blank(),
-            axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-            axis.text.y=element_blank(),
-            axis.ticks.y=element_blank())
-    
-    tbl_C2 <- tableGrob(tb_C2, rows=NULL, theme=tt2)
-    
-    grid.arrange(myplot, data.text, tbl_C2,
-                 nrow = 3, heights = c(2.75, 0.25, 0.75),
-                 as.table = TRUE,
-                 bottom=textGrob("8", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-    
-  } else{
-    if(length(tab_indic$out[which(tab_indic$out=="non")]) <3){
-      print("Trop peu d'indicateurs pour afficher un radar (moins de 3)")
-
-      text = "You are off radar for most indicators"
-      data.text <- ggplot() + 
-        ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-        theme_bw() +
-        theme(panel.grid=element_blank(), 
-              panel.background=element_rect(fill = "transparent",colour = NA),
-              panel.border=element_blank(),axis.title.x=element_blank(),
-              axis.text.x=element_blank(),
-              axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-              axis.text.y=element_blank(),
-              axis.ticks.y=element_blank())
-      
-      tbl_C2 <- tableGrob(tb_C2, rows=NULL, theme=tt2)
-      
-      grid.arrange(myplot, data.text, tbl_C2,
-                   nrow = 3, heights = c(2.75, 0.25, 0.75),
-                   as.table = TRUE,
-                   bottom=textGrob("8", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-      
-    } else {
-      
-      radar_C2 <- aggregate(df_NS_NNS_9metrics_norm_C2[,tab_indic$indic[which(tab_indic$out=="non")]], by = list(group = df_NS_NNS_9metrics_norm_C2[,"type2"]), FUN = median)
-      
-      radar_C2_bis <- as.data.frame(t(radar_C2))
-      radar_C2_bis$indic <- row.names(radar_C2_bis)
-      names(radar_C2_bis) <- as.vector(t(radar_C2_bis[1,]))
-      radar_C2_bis <- radar_C2_bis[-1,]
-      rownames(radar_C2_bis) <- 1:nrow(radar_C2_bis)
-      radar_C2_bis$C2 <- as.numeric(as.character(radar_C2_bis$C2))
-      radar_C2_bis$student <- as.numeric(as.character(radar_C2_bis$student))
-      
-      q1 <- unlist( lapply(df_NS_NNS_9metrics_norm_C2[which(df_NS_NNS_9metrics_norm_C2$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.25))}))
-      
-      q3 <- unlist( lapply(df_NS_NNS_9metrics_norm_C2[which(df_NS_NNS_9metrics_norm_C2$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.75))}))
-      
-      radar_C2_bis$lower <- q1
-      radar_C2_bis$upper <- q3
-      
-      radar_C2_bis <- radar_C2_bis[order(radar_C2_bis$group),]
-      
-      
-      if(all(tab_indic$out=="non")){
-        
-        add <- radar_C2_bis[1,]
-        add$group <- NA
-        
-        radar_C2_bis_bis <- rbind(radar_C2_bis,add)
-        
-        p <- radar_C2_bis_bis %>%
-          ggplot(aes(x = group, y = C2, group = 1)) +
-          geom_ribbon(aes(ymin = lower, ymax = upper, fill = "Q1-Q3 of control group"), alpha = 0.4) +
-          scale_x_discrete(expand = c(0,0), breaks = radar_C2_bis$group) + 
-          geom_line(colour = "black") +
-          geom_point(aes(colour = paste("median of",names(radar_C2_bis_bis)[1], sep = " "))) +
-          theme_light() +
-          theme(panel.grid.minor = element_blank()) + 
-          geom_line(aes(x = group, y = student, group = 1), colour = "orange") +
-          geom_point(aes(x = group, y = student, group = 1, colour = "student")) +
-          geom_ribbon(aes(ymin = -0.10, ymax = -0.01), fill = "white", alpha = 1) +
-          ylim(c(-0.10,1.00)) +
-          geom_text(x=1, y=-0.02, label="0", alpha=0.4) + 
-          geom_text(x=1, y=1.01, label="1") + 
-          coord_radar() +
-          labs(x = "", y = "") +
-          theme(axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())  + 
-          ggtitle(paste0("Radar chart : Student vs. ", names(radar_C2_bis_bis)[1])) + 
-          theme(plot.title = element_text(hjust = 0.5)) +
-          scale_colour_manual("Group : ", 
-                              breaks = c(paste("median of",names(radar_C2_bis_bis)[1], sep = " "),"student"),
-                              values = c("black", "orange"))  +
-          scale_fill_manual("Colored strip :", 
-                            breaks = c("Q1-Q3 of control group"),
-                            values = c("grey70")) +
-          theme(legend.position="bottom",
-                legend.text=element_text(size=12),
-                plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13))  +
-          guides(color = guide_legend(order = 1))
-        
-        tbl_C2 <- tableGrob(tb_C2, rows=NULL, theme=tt2)
-        
-        grid.arrange(p, tbl_C2,
-                     nrow = 2, heights = c(2, 0.5),
-                     as.table = TRUE,
-                     bottom=textGrob("8", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-        
-      } else {
-        
-        add <- radar_C2_bis[1,]
-        add$group <- NA
-        
-        radar_C2_bis_bis <- rbind(radar_C2_bis,add)
-        
-        p <- radar_C2_bis_bis %>%
-          ggplot(aes(x = group, y = C2, group = 1)) +
-          geom_ribbon(aes(ymin = lower, ymax = upper, fill = "Q1-Q3 of control group"), alpha = 0.4) +
-          scale_x_discrete(expand = c(0,0), breaks = radar_C2_bis$group) + 
-          geom_line(colour = "black") +
-          geom_point(aes(colour = paste("median of",names(radar_C2_bis_bis)[1], sep = " "))) +
-          theme_light() +
-          theme(panel.grid.minor = element_blank()) + 
-          geom_line(aes(x = group, y = student, group = 1), colour = "orange") +
-          geom_point(aes(x = group, y = student, group = 1, colour = "student")) +
-          geom_ribbon(aes(ymin = -0.10, ymax = -0.01), fill = "white", alpha = 1) +
-          ylim(c(-0.10,1.00)) +
-          geom_text(x=1, y=-0.02, label="0", alpha=0.4) + 
-          geom_text(x=1, y=1.01, label="1") + 
-          coord_radar() +
-          labs(x = "", y = "") +
-          theme(axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())  + 
-          ggtitle(paste0("Radar chart : Student vs. ", names(radar_C2_bis_bis)[1])) + 
-          theme(plot.title = element_text(hjust = 0.5)) +
-          scale_colour_manual("Group : ", 
-                              breaks = c(paste("median of",names(radar_C2_bis_bis)[1], sep = " "),"student"),
-                              values = c("black", "orange"))  +
-          scale_fill_manual("Colored strip :", 
-                            breaks = c("Q1-Q3 of control group"),
-                            values = c("grey70")) +
-          theme(legend.position="bottom",
-                legend.text=element_text(size=12),
-                plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13))  +
-          guides(color = guide_legend(order = 1))
-        
-        text = paste("You are off radar for the following indicators :", paste(tab_indic$indic[which(tab_indic$out=="oui")],collapse=", "), sep = " ")
-        data.text <- ggplot() + 
-          ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
-          theme_bw() +
-          theme(panel.grid=element_blank(), 
-                panel.background=element_rect(fill = "transparent",colour = NA),
-                panel.border=element_blank(),axis.title.x=element_blank(),
-                axis.text.x=element_blank(),
-                axis.ticks.x=element_blank(),axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank())
-        
-        tbl_C2 <- tableGrob(tb_C2, rows=NULL, theme=tt2)
-        
-        grid.arrange(p, data.text, tbl_C2,
-                     nrow = 3, heights = c(2.75, 0.25, 0.75),
-                     as.table = TRUE,
-                     bottom=textGrob("8", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
-        
-      }
-      
-    }
-  }
-  
-  
 
   
 }
 
 
 
-#viz(17002438)
-#viz(18007729)
-#viz(15006495)
+###### Creation des fichiers de feedback
 
 student_ID <- df_sampleALE_allMetrics$document
-
-
 
 for(i in 1:length(student_ID)){
   nom <- student_ID[i]
   tfile <- paste(path_feedbacks,"/", nom, " ", Sys.Date() ,".pdf", sep="")
   pdf(tfile,width=15,height=10)
   
-  
-  ## appel fonction pour les graphiques personnalis?s
+  ## appel fonction de visualisation
   viz(nom)
   ##
   
@@ -1428,10 +369,7 @@ for(i in 1:length(student_ID)){
 
 
 
-# 
-# 
-# 
-# ### Meta-donnees (hist / facet_wrap + boxplot)
+# ###### Meta-donnees (hist / facet_wrap + boxplot)
 # 
 # df_sampleALE  <- read.csv2(file = "S:/DUNE-DESIR/VisLinguistique/Test_chaine/VisLang/corpusSCELVA_cleaned/sample_SCELVA.csv", sep = ",")
 # 
@@ -1505,5 +443,4 @@ for(i in 1:length(student_ID)){
 #   geom_vline(xintercept = 3.5, col='grey', lwd=1.2, linetype="dotted") +
 #   ggtitle("Reading regularity among students with different CECR levels") + xlab("Reading regularity") + ylab("Percentages") +
 #   theme(plot.title = element_text(hjust = 0.5))
-
 
