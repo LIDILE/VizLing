@@ -25,10 +25,10 @@ df_sampleALE$text <- str_squish(df_sampleALE$text) # Trim whitespace from a stri
 
 ## Remove tags
 cleanFun <- function(htmlString) {
-  return(gsub("<.*?>", "", htmlString))
+  return(gsub("<.*?>", " ", htmlString))
 }
 df_sampleALE$text <- cleanFun(df_sampleALE$text)
-df_sampleALE$text <- gsub("&amp;", "", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("&amp;", " ", df_sampleALE$text, fixed=TRUE)
 
 
 ## On enleve/modifie les caracteres speciaux
