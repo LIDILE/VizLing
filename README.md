@@ -52,6 +52,9 @@ R NS_NNS_viz.r
 First integrated version of all scripts. One program runs the pre-processing and metrics computation scripts. 
 The visualisation script is run separately. 
 
+18/12/2019
+Fully integrated pipeline including text import from Moodle assignment zip file to creating vizualisations in rada mode. 
+Simplified metrics and created explanations to read each metric. 
 
 
 ## Credits, License and citations
