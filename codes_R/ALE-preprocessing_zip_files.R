@@ -56,7 +56,8 @@ df_sampleALE$text <- gsub("[][]|[^[:ascii:]]", " ", df_sampleALE$text, perl=T)  
 ## Transformation ponctuation/espace
 
 # creer espaces autour de ponctuation, reduire espaces, supprimer espaces non desires
-df_sampleALE$text <- gsub(".", " . ", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("(\\d+),(\\d+)", "\\1.\\2", df_sampleALE$text) # On remplace les virgules par des points pour les nombres decimaux
+df_sampleALE$text <- gsub(pattern='((?<![0-9])\\.)|(\\.(?![0-9]))', replacement=" . ", x=df_sampleALE$text, perl=TRUE) # . hors nb decimaux
 df_sampleALE$text <- gsub(",", " , ", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub(";", " ; ", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub(":", " : ", df_sampleALE$text, fixed=TRUE)
