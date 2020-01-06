@@ -150,6 +150,44 @@ viz <- function(student_ID){
   grid.arrange(image_ggplot(im_pdf[2]), bottom=textGrob("1", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
   
   
+  
+  ###### Texte de l'etudiant
+  
+  text <- as.character(df_sampleALE$text[which(df_sampleALE$doc_id == student_ID)])
+
+  # Mise en page selon le nombre de mots du texte pour un meilleur affichage
+  if(df_NS_NNS_9metrics$W[which(df_NS_NNS_9metrics$document==student_ID)] > 450){
+    fontsize_var <- 12
+    xmin <- -0.68
+    var_width = 120
+  } else if(df_NS_NNS_9metrics$W[which(df_NS_NNS_9metrics$document==student_ID)] <= 450 & df_NS_NNS_9metrics$W[which(df_NS_NNS_9metrics$document==student_ID)] > 200){
+    fontsize_var <- 15
+    xmin <- -0.8
+    var_width = 120
+  } else {
+    fontsize_var <- 18
+    xmin <- -0.85
+    var_width = 100
+  }
+  
+  text <- str_wrap(text, width = var_width)
+  
+  text_plot <- ggplot() +
+    annotation_custom(grid::textGrob(text, gp=gpar(fontsize=fontsize_var,font=50), hjust=0 ), xmin = xmin) +
+    theme_bw() +
+    theme(panel.grid=element_blank(), 
+          panel.background=element_rect(fill = "transparent",colour = NA),
+          panel.border=element_blank(),axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank(),axis.title.y=element_blank(),
+          axis.text.y=element_blank(),
+          axis.ticks.y=element_blank())
+  
+  grid.arrange(top=textGrob("Your text", x=0.5, y=-0.1, gp=gpar(fontsize=30,font=50)), text_plot,
+               bottom=textGrob("2", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
+  
+  
+  
   ###### Graphique tableau de description des indicateurs
   
   grid.arrange(top=textGrob("Table of the indicators of linguistic richness", x=0.5, y=-0.5, gp=gpar(fontsize=30,font=50)), gr,
@@ -163,9 +201,9 @@ viz <- function(student_ID){
   ### Bornes indicateurs
   
   indic <- names(df_NS_NNS_9metrics)[2:(ncol(df_NS_NNS_9metrics)-2)]
-  #          "CTTR"  "W" "S" "T" "FOG" "RIX" "NDW" "MLT" "CN.T" "CP.T"  "K"       
-  minimum <- c(0.5,  15,  0,  1,    0,  1.5,   15,    5,     0,     0,   0)
-  maximum <- c(  9, 900, 30, 35,   40,   15,  900,   40,     5,     3, 800)
+  #          "CTTR"  "W" "T" "RIX" "NDW" "MLT" "CN.T" "CP.T"  "K"       
+  minimum <- c(0.5,  15,  1,  1.5,   15,    5,     0,     0,   0)
+  maximum <- c(  9, 900, 35,   15,  900,   40,     5,     3, 800)
   tab_indic <- data.frame(indic, minimum, maximum)
   tab_indic$indic <- as.character(tab_indic$indic)
   tab_indic$out <- NA
@@ -200,7 +238,7 @@ viz <- function(student_ID){
   
   ### Pagination
   
-  page <- as.character(3:8)
+  page <- as.character(4:9)
   
   
   
