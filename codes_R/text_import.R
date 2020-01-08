@@ -1,5 +1,13 @@
+library(readr)
+library(quanteda)
+library(readtext)
+#devtools::install_github("quanteda/quanteda.corpora")
+#library(quanteda.corpora)
 library(stringr)
-### Dossier où l'archive zip de Moodle a été placée
+library(spacyr)
+library(tidyverse)
+library(dplyr)
+### Dossier � l'archive zip de Moodle a été placée
 fullpath <- paste0(project_directory, "download")
 setwd(fullpath)
 
@@ -34,3 +42,9 @@ write.csv(base_f,
           file=paste0(project_directory,"/", corpusSCELVA,"/",name_zip_file), 
           row.names=FALSE)
 setwd(project_directory)
+
+# Import csv as data frame 
+
+df_sampleALE <- read.csv(paste0(project_directory, corpusSCELVA ,sep, name_zip_file), 
+                         stringsAsFactors=FALSE,
+                         encoding = 'UTF-8')

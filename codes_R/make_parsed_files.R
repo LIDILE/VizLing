@@ -109,7 +109,7 @@ setwd(project_directory)
 path_input_text= paste0(project_directory, "corpusALE", sep)#"samples"#
 #output file name
 output_path_metric_SCA = paste0(project_directory, "metrics_SCA", sep)
-output_path_parsed = paste0(project_directory, "ParsedFiles", sep)
+output_path_parsed = paste0(project_directory, parsedFiles, sep)
 metrics_SCA_filename = "ALE_metrics_SCA.csv"
 # output file name
 check_creat_directory(output_path_metric_SCA)

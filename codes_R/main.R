@@ -1,6 +1,6 @@
 # create a directory
-check_creat_directory = function(path){
-  dir.create(file.path(path), showWarnings = FALSE)
+check_creat_directory = function(path_dir){
+  dir.create(file.path(path_dir), showWarnings = FALSE)
 }
 # detect the os name
 get_sys_name = function(){
@@ -19,10 +19,10 @@ counter = function(out_command){
 os = get_sys_name()
 if (os == "Windows"){
   
-  project_directory = "P:\\suivi_projets\\VisLang\\Visualisation_linguistique-master\\" #"P:\\suivi_projets\\VisLang\\VisLang\\" 
+  project_directory = "P:\\suivi_projets\\VisLang\\Visualisation_linguistique\\" 
   sep = "\\"
 }else{
-  project_directory = "/home/knefati/Documents/MyWork-Ensai/VizLing/"
+  project_directory = "/home/knefati/Documents/MyWork-Ensai/Visualisation_linguistique/"
   sep = "/"
 }
 
@@ -37,16 +37,22 @@ name_zip_file = "raw_text_students.csv"
 df_all_metrics = "df_sampleALE_allMetrics.csv"
 requirements_feedbacks = "requirements_feedbacks"
 path_feedbacks= "feedbacks"
-
+parsedFiles = "ParsedFiles"
+data_from_csv = TRUE
 check_creat_directory(path_feedbacks)
+
+unlink(paste0(project_directory,corpusALE), recursive = TRUE)
 
 ###########################################
 #####                                 #####  
 #####   script0 : Query_data          #####   
 #####                                 #####  
 ###########################################
-
-source("codes_R/text_import.R")
+if (data_from_csv){
+  source("codes_R/text_import_from_csv.R")
+}else{
+  source("codes_R/text_import.R")
+}
 
 ###########################################
 #####                                 #####  
@@ -54,8 +60,7 @@ source("codes_R/text_import.R")
 #####                                 #####  
 ###########################################
 
-source("codes_R/ALE-preprocessing_zip_files.R")
-# source("codes_R/ALE-preprocessing.R")
+source("codes_R/ALE-preprocessing.R")
 
 ###########################################
 #####                                 #####  
@@ -63,6 +68,7 @@ source("codes_R/ALE-preprocessing_zip_files.R")
 #####                                 #####  
 ###########################################
 
+unlink(paste0(project_directory,parsedFiles), recursive = TRUE) # delete old directory if exist
 source("codes_R/make_parsed_files.R")
 
 ###########################################
@@ -79,4 +85,4 @@ source("codes_R/ALE-all-metrics.R")
 #####                                 #####  
 ###########################################
 
-source("code_R/create_feedback.R")
+source("codes_R/create_feedback.R")

@@ -12,13 +12,6 @@ library(dplyr)
 options(java.parameters = "-Xmx8000m")   # permet a R d'utiliser plus de RAM
 
 
-#Import csv as data frame 
-
-df_sampleALE <- read.csv(paste0(project_directory, corpusSCELVA ,sep, name_zip_file), 
-                         stringsAsFactors=FALSE,
-                         encoding = 'UTF-8')
-
-
 df_sampleALE$text <- gsub('\"\"', '\"', df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- str_squish(df_sampleALE$text) # Trim whitespace from a string
 
@@ -48,7 +41,7 @@ df_sampleALE$text <- gsub("}", ")", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub("etc...", "etc.", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub("etc..", "etc.", df_sampleALE$text, fixed=TRUE)
 #df_sampleALE$text <- gsub("etc.", "...", df_sampleALE$text, fixed=TRUE)
-df_sampleALE$text <- gsub("[][]|[^[:ascii:]]", " ", df_sampleALE$text, perl=T)  # enl?ve   \u2190 \u2192 ...
+df_sampleALE$text <- gsub("[][]|[^[:ascii:]]", " ", df_sampleALE$text, perl=T)  # enlève   \u2190 \u2192 ...
 
 
 
@@ -119,7 +112,8 @@ df_sampleALE$text <- trimws(df_sampleALE$text)
 
 ## On ajoute des points à la fin des textes s'il n'y en a pas pour le parseur.
 
-df_sampleALE$text[!(str_sub(df_sampleALE$text,-1,-1) %in% c(".","?","!"))] <- paste(df_sampleALE$text[!(str_sub(df_sampleALE$text,-1,-1) %in% c(".","?","!"))],".", sep = "")
+df_sampleALE$text[!(str_sub(df_sampleALE$text,-1,-1) %in% c(".","?","!"))] <- paste(
+  df_sampleALE$text[!(str_sub(df_sampleALE$text,-1,-1) %in% c(".","?","!"))],".", sep = "")
 
 
 

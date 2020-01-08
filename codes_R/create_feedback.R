@@ -1,4 +1,3 @@
-
 #Visualisation of NS and NNS metrics
 
 library(readtext)
@@ -10,7 +9,7 @@ library(ggplot2)
 library(scales)
 library(grid)
 library(gridExtra)
-library(ggiraphExtra) # pour coord_radar, fonction pour mettre le graphe en coordonnÃ©es polaires et linÃ©ariser les segments incurvÃ©s
+library(ggiraphExtra) # pour coord_radar, fonction pour mettre le graphe en coordonnées polaires et linéariser les segments incurvés
 library(magick)       # pour importer les pdf sous forme d'images
 
 
@@ -19,11 +18,14 @@ setwd(project_directory)
 
 df_sampleALE_allMetrics <- read.csv(paste0(metrics_SCA,"/","df_sampleALE_allMetrics.csv"))
 
-df_control_cohort_allMetrics <-  read.csv(paste0(metrics_SCA,"/","cohort_df_sampleALE_allMetrics.csv"))
-#df_control_cohort_allMetrics <-   read.csv(paste0(metrics_SCA,"/","df_sampleALE_allMetrics.csv"))
+if (data_from_csv){
+  df_control_cohort_allMetrics <-   read.csv(paste0(metrics_SCA,"/","df_sampleALE_allMetrics.csv"))
+}else{
+  df_control_cohort_allMetrics <-  read.csv(paste0(metrics_SCA,"/","cohort_df_sampleALE_allMetrics.csv"))
+}
 
 # On enleve les deux etudiants qui n'ont rien ecrit ou qui ont ecrit un seul mot dans la cohorte controle
-df_control_cohort_allMetrics <- df_control_cohort_allMetrics[!(df_control_cohort_allMetrics$document %in% c(17000798,15006495)),]
+# df_control_cohort_allMetrics <- df_control_cohort_allMetrics[!(df_control_cohort_allMetrics$document %in% c(17000798,15006495)),]
 
 
 df_sampleALE_allMetrics$document <-as.character(df_sampleALE_allMetrics$document)
@@ -34,8 +36,16 @@ df_control_cohort_allMetrics$document <- as.character(df_control_cohort_allMetri
 
 
 ## Merge de la cohorte temoin avec les annotations du CELVA
-
 scelva <- read.csv2(file = paste0(requirements_feedbacks,"/","CELVA.Sp-full-annotation.csv"), sep = ",", na.strings = "")
+
+# df_sampleALE2 = df_sampleALE
+# colnames(df_sampleALE2)[1]="document"
+# b=merge(scelva,df_sampleALE2, by="document")[c("document","doc_id", "texte","CECR.niveau")]
+# colnames(b)[1:2]=c("id_etudiant", "document")
+# b= b[!b$id_etudiant %in% c(17000798,15006495),]
+# write.csv(b, file = "CELVA.Sp-full-annotation.csv")
+# scelva <- read.csv2(file = paste0(requirements_feedbacks,"/","CELVA.Sp-full-annotation.csv"), sep = ",", na.strings = "")
+
 scelva$CECR.niveau <- as.character(scelva$CECR.niveau)
 scelva$CECR.niveau <- as.factor(scelva$CECR.niveau)
 
@@ -53,29 +63,27 @@ df_control_cohort_allMetrics <- df_control_cohort_allMetrics[which(is.na(df_cont
 
 
 ## Creation NDW
-
 df_sampleALE_allMetrics$NDW <- round(df_sampleALE_allMetrics$TTR * df_sampleALE_allMetrics$W)
 df_control_cohort_allMetrics$NDW <- round(df_control_cohort_allMetrics$TTR * df_control_cohort_allMetrics$W)
 
 
 
 ## Merge final
-
-df_sampleALE_allMetrics <- df_sampleALE_allMetrics[,c("document","CTTR","W","S.1","T",
-                                                      "FOG","RIX","NDW",
+df_sampleALE_allMetrics <- df_sampleALE_allMetrics[,c("document","CTTR","W","T",
+                                                      "RIX","NDW",
                                                       "MLT",
                                                       "CN.T","CP.T","K",
                                                       "type1","type2")]
 
-df_control_cohort_allMetrics <- df_control_cohort_allMetrics[,c("document","CTTR","W","S.1","T",
-                                                                "FOG","RIX","NDW",
+df_control_cohort_allMetrics <- df_control_cohort_allMetrics[,c("document","CTTR","W","T",
+                                                                "RIX","NDW",
                                                                 "MLT",
                                                                 "CN.T","CP.T","K",
                                                                 "type1","type2")]
 
 df_NS_NNS_allMetrics <-rbind(df_control_cohort_allMetrics, df_sampleALE_allMetrics)
 
-names(df_NS_NNS_allMetrics) <- c("document","CTTR","W","S","T","FOG","RIX","NDW","MLT",
+names(df_NS_NNS_allMetrics) <- c("document","CTTR","W","T","RIX","NDW","MLT",
                                  "CN/T","CP/T","K","type1","type2")
 
 
@@ -127,15 +135,15 @@ tt2 <- ttheme_default(core = list(fg_params=list(cex = 1.1)),
 ###### Page de garde et sommaire
 
 im_pdf <- image_read_pdf(paste0(requirements_feedbacks,"/", "page_garde_sommaire.pdf"))
-          
 
-###### Image si radar impossible Ã  realiser (image libre de droit)
-          
+
+###### Image si radar impossible à realiser (image libre de droit)
+
 img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
 im_plot <- image_ggplot(img)
 
 
-          
+
 ###### Fonction de visualisation
 
 viz <- function(student_ID){
@@ -154,7 +162,7 @@ viz <- function(student_ID){
   ###### Texte de l'etudiant
   
   text <- as.character(df_sampleALE$text[which(df_sampleALE$doc_id == student_ID)])
-
+  
   # Mise en page selon le nombre de mots du texte pour un meilleur affichage
   if(df_NS_NNS_9metrics$W[which(df_NS_NNS_9metrics$document==student_ID)] > 450){
     fontsize_var <- 12
@@ -225,12 +233,12 @@ viz <- function(student_ID){
   ### Normalisation
   
   df_NS_NNS_9metrics_norm    <- df_NS_NNS_9metrics
- 
+  
   for(i in 1:nrow(tab_indic)){
     df_NS_NNS_9metrics_norm[,tab_indic$indic[i]] <- (df_NS_NNS_9metrics_norm[,tab_indic$indic[i]] - tab_indic$minimum[i]) / (tab_indic$maximum[i] - tab_indic$minimum[i])
   }
   
- 
+  
   ### Niveaux
   
   niveaux <- c("A1","A2","B1","B2","C1","C2")
@@ -381,15 +389,18 @@ viz <- function(student_ID){
       
     }
   }
-
+  
   
 }
 
 
 
 ###### Creation des fichiers de feedback
-
-student_ID <- df_sampleALE_allMetrics$document
+if (data_from_csv){
+  student_ID <- scelva$document
+}else{
+  student_ID <- df_sampleALE_allMetrics$document 
+}
 
 for(i in 1:length(student_ID)){
   nom <- student_ID[i]
@@ -402,9 +413,6 @@ for(i in 1:length(student_ID)){
   
   dev.off()
 }
-
-
-
 
 
 # ###### Meta-donnees (hist / facet_wrap + boxplot)
