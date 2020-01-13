@@ -9,7 +9,7 @@ library(ggplot2)
 library(scales)
 library(grid)
 library(gridExtra)
-library(ggiraphExtra) # pour coord_radar, fonction pour mettre le graphe en coordonnées polaires et linéariser les segments incurvés
+library(ggiraphExtra) # pour coord_radar, fonction pour mettre le graphe en coordonnÃ©es polaires et linÃ©ariser les segments incurvÃ©s
 library(magick)       # pour importer les pdf sous forme d'images
 
 
@@ -107,11 +107,11 @@ names(description) <- gsub(names(description), pattern = ".", replacement = " ",
 ###### Mise en forme du tableau de description des variables
 
 theme_desc <- gridExtra::ttheme_default(
-  core = list(fg_params=list(hjust=0, cex = 2, x=rep(0.01,11)),
-              padding = unit(c(4, 8), "mm")),
-  colhead = list(fg_params=list(cex = 2)),
-  rowhead = list(fg_params=list(cex = 2)),
-  base_size = 10)
+  core = list(fg_params=list(hjust=0, cex = 1, x=rep(0.01,11)),
+              padding = unit(c(4, 6), "mm")),
+  colhead = list(fg_params=list(cex = 1)),
+  rowhead = list(fg_params=list(cex = 1)),
+  base_size = 12)
 
 
 ###### Tableau de description des variables
@@ -137,7 +137,7 @@ tt2 <- ttheme_default(core = list(fg_params=list(cex = 1.1)),
 im_pdf <- image_read_pdf(paste0(requirements_feedbacks,"/", "page_garde_sommaire.pdf"))
 
 
-###### Image si radar impossible à realiser (image libre de droit)
+###### Image si radar impossible Ã  realiser (image libre de droit)
 
 img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
 im_plot <- image_ggplot(img)
@@ -198,8 +198,8 @@ viz <- function(student_ID){
   
   ###### Graphique tableau de description des indicateurs
   
-  grid.arrange(top=textGrob("Table of the indicators of linguistic richness", x=0.5, y=-0.5, gp=gpar(fontsize=30,font=50)), gr,
-               bottom=textGrob("2", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
+  grid.arrange(top=textGrob("Table of the indicators of linguistic richness", x=0.5, y=-0.1, gp=gpar(fontsize=30,font=50)), gr,
+               bottom=textGrob("3", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
   
   
   
