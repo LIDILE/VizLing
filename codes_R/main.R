@@ -22,7 +22,7 @@ if (os == "Windows"){
   project_directory = "P:\\suivi_projets\\VisLang\\Visualisation_linguistique\\" 
   sep = "\\"
 }else{
-  project_directory = "/home/knefati/Documents/MyWork-Ensai/Visualisation_linguistique/"
+  project_directory = "~/Documents/Thomas/MaRecherche/SoftwareApplications/Visualisation_linguistique/"
   sep = "/"
 }
 
@@ -38,7 +38,7 @@ df_all_metrics = "df_sampleALE_allMetrics.csv"
 requirements_feedbacks = "requirements_feedbacks"
 path_feedbacks= "feedbacks"
 parsedFiles = "ParsedFiles"
-data_from_csv = TRUE
+data_from_csv = TRUE #true if .csv and FALSE if .zip from MOODLE
 check_creat_directory(path_feedbacks)
 
 unlink(paste0(project_directory,corpusALE), recursive = TRUE)
