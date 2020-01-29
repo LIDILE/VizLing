@@ -1,0 +1,33 @@
+Variable,Description,Category,Interpretation
+CTTR,Carroll's Corrected Type Token ratio,Text.variation.words,"The higher the richer the vocabulary. 
+The index is correlaled with the length of your text.
+Longer texts have higher values. "
+W,Number of words,Text.size.words,The number of words in your text.
+T,Minimally terminable unit,Text.size.sentence,"The number of sentences that include minimal grammar constructions such as 
+subject + verb."
+RIX,Anderson's (1983) Readability Index,Sentence.difficulty,"How difficult or easy it is to read your text. 
+The higher the more difficult a text. 
+It is linked to the number of long words per sentence. 
+RIX scores are normally between 1.5 (very easy) and 7.2 or above (very difficult)."
+NDW,Number of different words,Text.size.type,"The number of different words in your text. 
+For example ""The experiment in the lab"" includes 5 words but only 4 different words.   "
+MLT,Mean Length of T-units,Sentence.size,"How long your sentences are on average. 
+Not too short not too long is good, e.g. 10 words on average."
+CN/T,"Average number of complex nominals in 
+T-units",Sentence.complex_nominals   ,"The ratio of complex noun constructions relative to the number of sentences. 
+This includes a noun used in the following cases: 
+- compound words, e.g. ""the science community""
+- adjective + nouns, e.g. ""the scientific equipment""
+- genitive constructions, e.g. ""the scientist's equipment""
+- participle + noun, e.g. ""the finishing line""
+- subordinate clause, e.g. ""This is the experiment that is conducted"" 
+  or ""The results suggest that the experiment is successful""
+- Infinitive/gerund as subject, e.g. ""To experiment/experimenting this answers an
+  important question"""
+CP/T,"Average number of coordinate phrases per 
+T-units",Sentence.coordination ,"The number of coordinate constructions in relation to the number of sentences, e.g. 
+The clause ""This experiment gives strong evidence and good results ..."" includes 
+""and"" indicating coordination between ""evidence"" and ""results""."
+K,Yule’s K,Text.repetitions,"How many times you repeat words. 
+The index is linked to the number of times you use each word in your text. 
+A small value indicates a rich vocabulary."
