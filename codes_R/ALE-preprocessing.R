@@ -108,11 +108,11 @@ df_sampleALE$text[!(str_sub(df_sampleALE$text,-1,-1) %in% c(".","?","!"))] <- pa
 
 
 
-path_cleaned_texts = paste0(project_directory, corpus_SCELVA_cleaned)
+path_cleaned_texts = paste0(project_directory, corpus_from_data_cleaned)
 check_creat_directory(path_cleaned_texts)
 setwd(path_cleaned_texts)
 write.csv(df_sampleALE, 
-          file=name_file_sample_SCELVA, 
+          file=name_file_sample_CELVA, 
           row.names=FALSE)
 
 
@@ -128,5 +128,5 @@ write_files = sapply(1:nrow(df_sampleALE), function(i) {
               quote = FALSE)
 }
 )
-cat("-->> Text files are created with success !\n")
 setwd(project_directory)
+cat("-->> Text files are created with success !\n")

@@ -9,9 +9,7 @@ library(tidyverse)
 library(dplyr)
 #Import csv as data frame 
 
-# df_sampleALE <- read_csv(paste0(project_directory, corpusSCELVA ,sep,"CELVA.Sp_398.csv"))
-
-df_sampleALE <- read.csv(paste0(project_directory, corpusSCELVA ,sep,"CELVA.Sp_398.csv"), 
+df_sampleALE <- read.csv(paste0(project_directory,"data",sep,"from_csv",sep,name_csv_file), 
                          stringsAsFactors=FALSE,
                          encoding = 'UTF-8')
 

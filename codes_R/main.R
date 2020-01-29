@@ -23,22 +23,26 @@ if (os == "Windows"){
   sep = "\\"
 }else{
   project_directory = "~/Documents/Thomas/MaRecherche/SoftwareApplications/Visualisation_linguistique/"
+  project_directory = ""
   sep = "/"
 }
 
 setwd(project_directory)
 
 corpusALE = "corpusALE" 
-corpusSCELVA = "corpusSCELVA"
+corpus_from_data = "corpus_from_data"
 metrics_SCA = "metrics_SCA"
-name_file_sample_SCELVA = "sample_SCELVA.csv"
-corpus_SCELVA_cleaned = "corpusSCELVA_cleaned"
+name_file_sample_CELVA = "sample_CELVA.csv"
+corpus_from_data_cleaned = "corpus_from_data_cleaned"
 name_zip_file = "raw_text_students.csv"
+
 df_all_metrics = "df_sampleALE_allMetrics.csv"
 requirements_feedbacks = "requirements_feedbacks"
 path_feedbacks= "feedbacks"
 parsedFiles = "ParsedFiles"
-data_from_csv = TRUE #true if .csv and FALSE if .zip from MOODLE
+
+data_from_csv = FALSE #true if .csv and FALSE if .zip from MOODLE
+desc_stat_chart = "boxplot" # possible parameters: c("boxplot",  "violin",   "boxplot_point" )
 check_creat_directory(path_feedbacks)
 
 unlink(paste0(project_directory,corpusALE), recursive = TRUE)
@@ -49,6 +53,7 @@ unlink(paste0(project_directory,corpusALE), recursive = TRUE)
 #####                                 #####  
 ###########################################
 if (data_from_csv){
+  name_csv_file = "CELVA.Sp_398.csv"
   source("codes_R/text_import_from_csv.R")
 }else{
   source("codes_R/text_import.R")

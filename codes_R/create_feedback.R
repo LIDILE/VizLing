@@ -9,47 +9,38 @@ library(ggplot2)
 library(scales)
 library(grid)
 library(gridExtra)
-library(ggiraphExtra) # pour coord_radar, fonction pour mettre le graphe en coordonnées polaires et linéariser les segments incurvés
+library(ggiraphExtra) # pour coord_radar, fonction pour mettre le graphe en coordonn?es polaires et lin?ariser les segments incurv?s
 library(magick)       # pour importer les pdf sous forme d'images
 
 
 ## Importation de la cohorte temoin et des etudiants a comparer
 setwd(project_directory)
 
-df_sampleALE_allMetrics <- read.csv(paste0(metrics_SCA,"/","df_sampleALE_allMetrics.csv"))
-
-if (data_from_csv){
-  df_control_cohort_allMetrics <-   read.csv(paste0(metrics_SCA,"/","df_sampleALE_allMetrics.csv"))
-}else{
-  df_control_cohort_allMetrics <-  read.csv(paste0(metrics_SCA,"/","cohort_df_sampleALE_allMetrics.csv"))
-}
-
-# On enleve les deux etudiants qui n'ont rien ecrit ou qui ont ecrit un seul mot dans la cohorte controle
-# df_control_cohort_allMetrics <- df_control_cohort_allMetrics[!(df_control_cohort_allMetrics$document %in% c(17000798,15006495)),]
+df_sampleALE_allMetrics <- read.csv(paste0(metrics_SCA,sep,"df_sampleALE_allMetrics.csv"), stringsAsFactors = FALSE)
 
 
-df_sampleALE_allMetrics$document <-as.character(df_sampleALE_allMetrics$document)
-
-df_control_cohort_allMetrics$document <- as.character(df_control_cohort_allMetrics$document)
+df_control_cohort_allMetrics <-  read.csv(paste0(requirements_feedbacks,sep,"cohort_df_sampleALE_allMetrics.csv"), stringsAsFactors = FALSE)
 
 
 
 
-## Merge de la cohorte temoin avec les annotations du CELVA
-scelva <- read.csv2(file = paste0(requirements_feedbacks,"/","CELVA.Sp-full-annotation.csv"), sep = ",", na.strings = "")
+# df_sampleALE_allMetrics$document <-as.character(df_sampleALE_allMetrics$document)
+# df_control_cohort_allMetrics$document <- as.character(df_control_cohort_allMetrics$document)
 
-# df_sampleALE2 = df_sampleALE
-# colnames(df_sampleALE2)[1]="document"
-# b=merge(scelva,df_sampleALE2, by="document")[c("document","doc_id", "texte","CECR.niveau")]
-# colnames(b)[1:2]=c("id_etudiant", "document")
-# b= b[!b$id_etudiant %in% c(17000798,15006495),]
-# write.csv(b, file = "CELVA.Sp-full-annotation.csv")
-# scelva <- read.csv2(file = paste0(requirements_feedbacks,"/","CELVA.Sp-full-annotation.csv"), sep = ",", na.strings = "")
 
-scelva$CECR.niveau <- as.character(scelva$CECR.niveau)
-scelva$CECR.niveau <- as.factor(scelva$CECR.niveau)
 
-df_control_cohort_allMetrics <- merge(scelva, df_control_cohort_allMetrics, by = "document")
+
+#  merge avec metadata
+# df_sampleALE  <-read.csv("P:/suivi_projets/VisLang/Visualisation_linguistique/data/from_csv/CELVA.Sp_398_metadata.csv",
+#                                                     encoding="UTF-8")
+# colnames(df_sampleALE)[1] = "id_etudiant"
+# 
+# 
+# df_sampleALE_allMetrics_test <- merge(df_sampleALE, df_sampleALE_allMetrics, by="id_etudiant")
+# 
+# 
+
+
 df_control_cohort_allMetrics$document <- paste("w1",c(1:nrow(df_control_cohort_allMetrics)), sep = "_")
 
 
@@ -83,8 +74,23 @@ df_control_cohort_allMetrics <- df_control_cohort_allMetrics[,c("document","CTTR
 
 df_NS_NNS_allMetrics <-rbind(df_control_cohort_allMetrics, df_sampleALE_allMetrics)
 
-names(df_NS_NNS_allMetrics) <- c("document","CTTR","W","T","RIX","NDW","MLT",
-                                 "CN/T","CP/T","K","type1","type2")
+
+df_NS_NNS_allMetrics$type1 <-as.factor(df_NS_NNS_allMetrics$type1)
+df_NS_NNS_allMetrics$type2 <-as.factor(df_NS_NNS_allMetrics$type2)
+
+
+df_NS_NNS_allMetrics$K <- 1/df_NS_NNS_allMetrics$K
+
+names(df_NS_NNS_allMetrics) <- c("document","CTTR\nText.variation.words","W\nText.size.words","T\nText.size.sentence",
+                                 "RIX\nSentence.difficulty","NDW\nText.size.type","MLT\nSentence.size",
+                                 "CN/T\nSentence.complex_nominals","CP/T\nSentence.coordination",
+                                 "1/K\nText.repetitions","type1","type2")
+
+#names(df_NS_NNS_allMetrics) <- c("document","CTTR","W","T","RIX","NDW","MLT",
+#                                 "CN/T","CP/T","1/K","type1","type2")
+
+#names(df_NS_NNS_allMetrics) <- c("document","CTTR","W","T","RIX","NDW","MLT",
+#                                 "CN/T","CP/T","K","type1","type2")
 
 
 
@@ -126,9 +132,9 @@ tt <- ttheme_default(colhead=list(fg_params = list(parse=TRUE)),
                      base_size = 10,
                      padding = unit(c(2, 4), "mm"))
 
-tt2 <- ttheme_default(core = list(fg_params=list(cex = 1.1)),
-                      colhead = list(fg_params=list(cex = 1.1)),
-                      rowhead = list(fg_params=list(cex = 1.1)))
+tt2 <- ttheme_default(core = list(fg_params=list(cex = 0.9)),
+                      colhead = list(fg_params=list(cex = 0.9)),
+                      rowhead = list(fg_params=list(cex = 0.9)))
 
 
 
@@ -137,7 +143,7 @@ tt2 <- ttheme_default(core = list(fg_params=list(cex = 1.1)),
 im_pdf <- image_read_pdf(paste0(requirements_feedbacks,"/", "page_garde_sommaire.pdf"))
 
 
-###### Image si radar impossible à realiser (image libre de droit)
+###### Image si radar impossible ? realiser (image libre de droit)
 
 img<-image_read(paste0(requirements_feedbacks, "/","man-3591573_1280.jpg"))
 im_plot <- image_ggplot(img)
@@ -209,9 +215,9 @@ viz <- function(student_ID){
   ### Bornes indicateurs
   
   indic <- names(df_NS_NNS_9metrics)[2:(ncol(df_NS_NNS_9metrics)-2)]
-  #          "CTTR"  "W" "T" "RIX" "NDW" "MLT" "CN.T" "CP.T"  "K"       
-  minimum <- c(0.5,  15,  1,  1.5,   15,    5,     0,     0,   0)
-  maximum <- c(  9, 900, 35,   15,  900,   40,     5,     3, 800)
+  #          "CTTR"  "W" "T" "RIX" "NDW" "MLT" "CN.T" "CP.T"  "1/K"        K dans [0;800]  ou [0;600]  
+  minimum <- c(0.5,  15,  1,  1.5,   15,    5,     0,     0,   1/800)
+  maximum <- c(  9, 900, 35,   15,  900,   40,     5,     3,    1/50)
   tab_indic <- data.frame(indic, minimum, maximum)
   tab_indic$indic <- as.character(tab_indic$indic)
   tab_indic$out <- NA
@@ -265,7 +271,12 @@ viz <- function(student_ID){
     
     tb <- df_NS_NNS_9metrics[which(df_NS_NNS_9metrics$type2==niv | df_NS_NNS_9metrics$type2=="student"),]
     
-    tb <- aggregate(tb[,tab_indic$indic], by = list(group = tb[,"type2"]), FUN = median)
+    tb$`1/K\nText.repetitions` <- 1/tb$`1/K\nText.repetitions` 
+    #names(tb)[which(names(tb)=="1/K")] <- "K"
+    names(tb)[which(names(tb)=="1/K\nText.repetitions")] <- "K\nText.repetitions"
+    
+    #tb <- aggregate(tb[,tab_indic$indic], by = list(group = tb[,"type2"]), FUN = median)
+    tb <- aggregate(tb[,names(tb)[2:(ncol(tb)-2)]], by = list(group = tb[,"type2"]), FUN = median)
     tb[,2:ncol(tb)] <- round(tb[,2:ncol(tb)],2)
     levels(tb$group)[1:6] <- paste("median of", levels(tb$group)[1:6])
     
@@ -300,7 +311,7 @@ viz <- function(student_ID){
       
       dd_norm <- df_NS_NNS_9metrics_norm[which(df_NS_NNS_9metrics_norm$type2==niv | df_NS_NNS_9metrics_norm$type2=="student"),]
       
-      radar <- aggregate(dd_norm[,tab_indic$indic[which(tab_indic$out=="non")]], by = list(group = dd_norm[,"type2"]), FUN = median)
+      radar <- aggregate(dd_norm[,tab_indic$indic[which(tab_indic$out=="non" & tab_indic$indic != "W\nText.size.words"  & tab_indic$indic != "T\nText.size.sentence" & tab_indic$indic != "NDW\nText.size.type")]], by = list(group = dd_norm[,"type2"]), FUN = median)
       
       radar_bis <- as.data.frame(t(radar))
       radar_bis$indic <- row.names(radar_bis)
@@ -310,9 +321,9 @@ viz <- function(student_ID){
       radar_bis[,which(names(radar_bis)==niv)] <- as.numeric(as.character(radar_bis[,which(names(radar_bis)==niv)]))
       radar_bis$student <- as.numeric(as.character(radar_bis$student))
       
-      q1 <- unlist( lapply(dd_norm[which(dd_norm$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.25))}))
+      q1 <- unlist( lapply(dd_norm[which(dd_norm$type2!="student"),tab_indic$indic[which(tab_indic$out=="non" & tab_indic$indic != "W\nText.size.words"  & tab_indic$indic != "T\nText.size.sentence" & tab_indic$indic != "NDW\nText.size.type")]], function(z){quantile(z, probs=c(0.25))}))
       
-      q3 <- unlist( lapply(dd_norm[which(dd_norm$type2!="student"),tab_indic$indic[which(tab_indic$out=="non")]], function(z){quantile(z, probs=c(0.75))}))
+      q3 <- unlist( lapply(dd_norm[which(dd_norm$type2!="student"),tab_indic$indic[which(tab_indic$out=="non" & tab_indic$indic != "W\nText.size.words"  & tab_indic$indic != "T\nText.size.sentence" & tab_indic$indic != "NDW\nText.size.type")]], function(z){quantile(z, probs=c(0.75))}))
       
       radar_bis$lower <- q1
       radar_bis$upper <- q3
@@ -355,20 +366,102 @@ viz <- function(student_ID){
               #legend.box = "vertical",
               legend.text=element_text(size=12),
               plot.title=element_text(size=20),
-              axis.text.x = element_text(size = 13)) +
+              axis.text.x = element_text(size = 8)) +
         guides(color = guide_legend(order = 1))
+      
+      
+      
+      ddc <- df_NS_NNS_9metrics[which(df_NS_NNS_9metrics$type2==niv | df_NS_NNS_9metrics$type2=="student"),]
+      ddc <- ddc[,c("document","W\nText.size.words","T\nText.size.sentence","NDW\nText.size.type","type2")]
+      
+      ddc_byVar <-gather(ddc,  key = "Metric", 
+                         value = "Value", -c("document","type2")
+      )
+      
+      if(desc_stat_chart=="boxplot_point"){
+        p1 <- ggplot(ddc_byVar[which(ddc_byVar$type2==niv),]) +
+          geom_boxplot(aes(x=Metric, y=Value, fill="")) +
+          scale_fill_manual(name="",values=c("white"), labels=c("Boxplot of control group")) +
+          geom_jitter(aes(x=Metric, y=Value, size ="student of control group"), position= position_jitter(0.4)) +
+          geom_hline(data = ddc_byVar[which(ddc_byVar$type=="student"),], aes(yintercept = Value, color=""), size = 1) +
+          facet_wrap(~Metric,scales = "free", drop = FALSE) + 
+          #facet_wrap(~Metric,scales = "free", drop = FALSE, ncol=1) + 
+          #theme(legend.position = "bottom") +
+          ggtitle(paste0("Boxplots : Student vs. ", names(radar_bis_bis)[1])) +
+          xlab("") +
+          scale_colour_manual(name = "", labels = c("student"), values=c("orange")) +
+          theme(plot.title = element_text(hjust = 0.5))  +
+          #coord_flip() +
+          guides(color = guide_legend(order = 1)) + 
+          theme(legend.position="bottom",
+                #legend.box = "vertical",
+                legend.text=element_text(size=12),
+                plot.title=element_text(size=20),
+                axis.text.x = element_text(size = 13)) +
+          theme(legend.title=element_blank())
+      }
+      
+      if(desc_stat_chart=="boxplot"){
+        p1 <- ggplot(ddc_byVar[which(ddc_byVar$type2==niv),]) +
+          geom_boxplot(aes(x=Metric, y=Value, fill="")) +
+          scale_fill_manual(name="",values=c("white"), labels=c("Boxplot of control group")) +
+          #geom_jitter(aes(x=Metric, y=Value, size ="student of control group"), position= position_jitter(0.4)) +
+          geom_hline(data = ddc_byVar[which(ddc_byVar$type=="student"),], aes(yintercept = Value, color=""), size = 1) +
+          facet_wrap(~Metric,scales = "free", drop = FALSE) + 
+          #facet_wrap(~Metric,scales = "free", drop = FALSE, ncol=1) + 
+          #theme(legend.position = "bottom") +
+          ggtitle(paste0("Boxplots : Student vs. ", names(radar_bis_bis)[1])) +
+          xlab("") +
+          scale_colour_manual(name = "", labels = c("student"), values=c("orange")) +
+          theme(plot.title = element_text(hjust = 0.5))  +
+          #coord_flip() +
+          guides(color = guide_legend(order = 1)) + 
+          theme(legend.position="bottom",
+                #legend.box = "vertical",
+                legend.text=element_text(size=12),
+                plot.title=element_text(size=20),
+                axis.text.x = element_text(size = 13))
+      }
+      
+      if(desc_stat_chart=="violin"){
+        p1 <- ggplot(ddc_byVar[which(ddc_byVar$type2==niv),]) +
+          geom_violin(aes(x=Metric, y=Value, fill="")) +
+          geom_boxplot(aes(x=Metric, y=Value, fill=""), width=0.1) +
+          scale_fill_manual(name="",values=c("white"), labels=c("Boxplot of control group")) +
+          #geom_jitter(aes(x=Metric, y=Value), position= position_jitter(0.4)) +
+          geom_hline(data = ddc_byVar[which(ddc_byVar$type=="student"),], aes(yintercept = Value, color=""), size = 1) +
+          facet_wrap(~Metric,scales = "free", drop = FALSE) + 
+          #facet_wrap(~Metric,scales = "free", drop = FALSE, ncol=1) + 
+          #theme(legend.position = "bottom") +
+          ggtitle(paste0("Violin plots : Student vs. ", names(radar_bis_bis)[1])) +
+          xlab("") +
+          scale_colour_manual(name = "", labels = c("student"), values=c("orange")) +
+          theme(plot.title = element_text(hjust = 0.5))  +
+          #coord_flip() +
+          guides(color = guide_legend(order = 1)) + 
+          theme(legend.position="bottom",
+                #legend.box = "vertical",
+                legend.text=element_text(size=12),
+                plot.title=element_text(size=20),
+                axis.text.x = element_text(size = 13)) 
+      }
+      
+      
+      
       
       
       if(all(tab_indic$out=="non")){
         
-        grid.arrange(p, tbl,
-                     nrow = 2, heights = c(2, 0.5),
+        grid.arrange(p, p1, tbl,
+                     heights = c(2, 0.5),
+                     layout_matrix = rbind(c(1, 2),
+                                           c(3, 3)),
                      as.table = TRUE,
                      bottom=textGrob(page[n], x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
         
       } else {
         
-        text = paste("You are off radar for the following indicators :", paste(tab_indic$indic[which(tab_indic$out=="oui")],collapse=", "), sep = " ")
+        text = paste("You are off radar for the following indicators :", paste(  unlist(str_split(tab_indic$indic[which(tab_indic$out=="oui")] , pattern = "\n"))[2*(1:length(tab_indic$indic[which(tab_indic$out=="oui")]) )-1]   ,collapse=", "), sep = " ")
         data.text <- ggplot() + 
           ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
           theme_bw() +
@@ -380,10 +473,13 @@ viz <- function(student_ID){
                 axis.text.y=element_blank(),
                 axis.ticks.y=element_blank())
         
-        grid.arrange(p, data.text, tbl,
-                     nrow = 3, heights = c(2.75, 0.25, 0.75),
+        grid.arrange(p, p1, data.text, tbl,
+                     heights = c(2.75, 0.25, 0.75),
+                     layout_matrix = rbind(c(1, 2),
+                                           c(3, 3),
+                                           c(4, 4)),
                      as.table = TRUE,
-                     bottom=textGrob(page[n], x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
+                     bottom=textGrob(page[n], x=0.5, y=2, hjust=0, gp=gpar( fontface="italic"))) 
         
       }
       
@@ -396,11 +492,8 @@ viz <- function(student_ID){
 
 
 ###### Creation des fichiers de feedback
-if (data_from_csv){
-  student_ID <- scelva$document
-}else{
-  student_ID <- df_sampleALE_allMetrics$document 
-}
+student_ID <- df_sampleALE_allMetrics$document 
+
 
 for(i in 1:length(student_ID)){
   nom <- student_ID[i]
@@ -413,80 +506,3 @@ for(i in 1:length(student_ID)){
   
   dev.off()
 }
-
-
-# ###### Meta-donnees (hist / facet_wrap + boxplot)
-# 
-# df_sampleALE  <- read.csv2(file = "S:/DUNE-DESIR/VisLinguistique/Test_chaine/VisLang/corpusSCELVA_cleaned/sample_SCELVA.csv", sep = ",")
-# 
-# df_sampleALE$document <- df_sampleALE$doc_id
-# 
-# df_sampleALE$doc_id <-NULL
-# 
-# df_sampleALE_allMetrics_metadata <- merge(df_sampleALE, df_sampleALE_allMetrics, by="document")
-# 
-# df_sampleALE_allMetrics_metadata$Domaine_de_specialite <- as.character(df_sampleALE_allMetrics_metadata$Domaine_de_specialite)
-# df_sampleALE_allMetrics_metadata$Domaine_de_specialite[which(df_sampleALE_allMetrics_metadata$Domaine_de_specialite=="M?decine")] <- "Medecine" 
-# df_sampleALE_allMetrics_metadata$Domaine_de_specialite <- as.factor(df_sampleALE_allMetrics_metadata$Domaine_de_specialite)
-# 
-# scelva <- read.csv2(file = "S:/DUNE-DESIR/VisLinguistique/CELVA.Sp-full-annotation - CELVA.Sp-full-annotation.csv", sep = ",")
-# scelva$CECR.niveau <- as.character(scelva$CECR.niveau)
-# scelva$CECR.niveau[which(scelva$CECR.niveau=="")] <- NA
-# scelva$CECR.niveau[which(scelva$CECR.niveau==" B1")] <- "B1"
-# scelva$CECR.niveau <- as.factor(scelva$CECR.niveau)
-# 
-# df_sample_scelva <- merge(scelva, df_sampleALE_allMetrics_metadata, by = "document")
-# #write.csv(df_sample_scelva, 
-# #          file=paste0(metrics_SCA, sep, "df_sample_scelva.csv"), 
-# #          row.names = FALSE)
-# 
-# df_sample_scelva_bis <- df_sample_scelva[,c("ID_etudiant","CECR.niveau","Lecture_regularite","Lang_exposition")]
-# 
-# 
-# df_sample_scelva_bis$Lang_exposition <- as.numeric(df_sample_scelva_bis$Lang_exposition)
-# 
-# df_sample_scelva_bis <- df_sample_scelva_bis[which(is.na(df_sample_scelva_bis$CECR.niveau)==F),]
-# 
-# 
-# # Lang_exposition
-# 
-# library(RColorBrewer)
-# 
-# ggplot(df_sample_scelva_bis[which(df_sample_scelva_bis$ID_etudiant!="student"),], aes(x=CECR.niveau, y=Lang_exposition, color=CECR.niveau)) +
-#   geom_boxplot(fill="white",outlier.colour = NA) +
-#   geom_point(position=position_jitterdodge(dodge.width=0.9, jitter.width = 0.4), alpha=0.5) +
-#   scale_color_manual(name="CECR levels",values=brewer.pal(8,"Set1")[-6]) +
-#   theme(legend.position = "bottom") +
-#   ggtitle("Lang exposition among students with different CECR levels") + xlab("") + ylab("Lang exposition in months") +
-#   theme(plot.title = element_text(hjust = 0.5))
-# 
-# 
-# 
-# 
-# # Lecture_regularite
-# 
-# df_sample_scelva_bis$Lecture_regularite <- as.character(df_sample_scelva_bis$Lecture_regularite)
-# df_sample_scelva_bis$Lecture_regularite <- factor(df_sample_scelva_bis$Lecture_regularite, levels = c("jamais","mensuelle","hebdomadaire","quotidienne"))
-# 
-# 
-# proportion <- df_sample_scelva_bis[,c("CECR.niveau", "Lecture_regularite")] %>%
-#   group_by(CECR.niveau, Lecture_regularite) %>%
-#   tally() %>%
-#   group_by(CECR.niveau) %>%
-#   mutate(pct = n / sum(n))
-# 
-# proportion2 <- proportion %>%
-#   mutate(y_label = paste0(round(pct*100, 1), "%"))
-# 
-# levels(proportion2$Lecture_regularite) <- c("never","monthly","weekly","daily")
-# 
-# ggplot(proportion2, aes(x = Lecture_regularite, y = pct, fill = factor(CECR.niveau))) +
-#   geom_bar(stat = "identity", position = "dodge", color = "grey40") +
-#   scale_fill_manual("CECR levels", values = rev(brewer.pal(7, "Set1")[-6])) +
-#   geom_text(aes(label = y_label), position = position_dodge(0.85), vjust = 1.5, color = "black") +
-#   geom_vline(xintercept = 1.5, col='grey', lwd=1.2, linetype="dotted") +
-#   geom_vline(xintercept = 2.5, col='grey', lwd=1.2, linetype="dotted") +
-#   geom_vline(xintercept = 3.5, col='grey', lwd=1.2, linetype="dotted") +
-#   ggtitle("Reading regularity among students with different CECR levels") + xlab("Reading regularity") + ylab("Percentages") +
-#   theme(plot.title = element_text(hjust = 0.5))
-
