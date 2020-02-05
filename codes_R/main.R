@@ -23,7 +23,6 @@ if (os == "Windows"){
   sep = "\\"
 }else{
   project_directory = "~/Documents/Thomas/MaRecherche/SoftwareApplications/Visualisation_linguistique/"
-  project_directory = ""
   sep = "/"
 }
 
