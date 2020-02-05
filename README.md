@@ -18,7 +18,7 @@ R software packages must be installed. See requirements.txt
 
 5. Add to your project directory these java software applications: "stanford-parser-full-2014-01-04" (from https://nlp.stanford.edu/software/stanford-parser-full-2014-01-04.zip) and "stanford-tregex-2014-01-04" (from https://nlp.stanford.edu/software/stanford-tregex-2014-01-04.zip) and you have to use the exact same names as mentionned. Unzip each directory in the same location. Remove the zip files. 
 
-6. Open Visualisation_linguistique-master/stanford-tregex-2014-01-04/tregex.sh. Modify memory allocation: change "java -mx100m ..." to "java -mx1500m ..."
+6. Open *project_directory*/stanford-tregex-2014-01-04/tregex.sh. Modify memory allocation: change "java -mx100m ..." to "java -mx1500m ..."
 
 7. Manually create INPUT data directories as explained in architecture.pdf
 
