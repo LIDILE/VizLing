@@ -6,13 +6,11 @@ Visualisation_linguistique is a R program to compute and visualise linguistic pr
 
 ## Installation
 Software requirements : 
-R software packages must be installed.
-
-R package requirement :
+R software packages must be installed. See requirements.txt
 
 1. Download zip file.
 
-2. First copy and unzip this project to some directory on your computer
+2. First copy and unzip this project to new directory on your computer
 
 3. Make sure that the packages listed in *requirements.txt* are installed.
 
@@ -33,20 +31,16 @@ Now, the project is ready to be used.
 
 Input file : zip file from Moodle Assignment activity (file containing texts of the learners)
 
-Place all .csv at the root of the program. The text file versions of all student writings will be created in the *corpusALE* folder. 
+Place the dowloaded .zip file in /data/zip_from_moodle. The text file versions of all student writings will be created in the *corpusALE* folder. 
 
-In the terminal, change directory to *VizLing*.
+In the terminal, go *project_directory*
 
 To process files and compute metrics, type the following command: 
 
 ```
-R ALE-all-metrics_vizling.r
+Rscript codes_R/main.R
 ```
-
-To create visualisations of 9 learner KPI:
-```
-R NS_NNS_viz.r
-```
+The visualisations are created in /feedbacks. One .pdf per student. 
 
 ## Change log
 
@@ -57,6 +51,9 @@ The visualisation script is run separately.
 18/12/2019
 Fully integrated pipeline including text import from Moodle assignment zip file to creating vizualisations in rada mode. 
 Simplified metrics and created explanations to read each metric. 
+
+5/02/2020
+Updated readme. New *data* folder structure. 
 
 
 ## Credits, License and citations
