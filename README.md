@@ -22,9 +22,11 @@ R package requirement :
 
 6. Open Visualisation_linguistique-master/stanford-tregex-2014-01-04/tregex.sh. Modify memory allocation: change "java -mx100m ..." to "java -mx1500m ..."
 
+7. Manually create INPUT data directories as explained in architecture.pdf
+
 Now, the project is ready to be used.
 
-Please read the file "architecture.docs" for more information about the input and the output of this project.
+
 
 
 ## Usage
