@@ -16,7 +16,7 @@ R software packages must be installed. See requirements.txt
 
 4. Enter the right *project_directory* (Visualisation_linguistique-master default name). Open "main.R" in Visualisation_linguistique-master/codes_R . MODIFY path according to your system : windows or linux.
 
-5. Add to your project directory these java software applications: "stanford-parser-full-2014-01-04" (from https://nlp.stanford.edu/software/stanford-parser-full-2014-01-04.zip) and "stanford-tregex-2014-01-04" (from https://nlp.stanford.edu/software/tregex.html) and you have to use the exact same names as mentionned. Unzip each directory in the same location. Remove the zip files. 
+5. Add to your project directory these java software applications: "stanford-parser-full-2014-01-04" (from https://nlp.stanford.edu/software/stanford-parser-full-2014-01-04.zip) and "stanford-tregex-2014-01-04" (from https://nlp.stanford.edu/software/stanford-tregex-2014-01-04.zip) and you have to use the exact same names as mentionned. Unzip each directory in the same location. Remove the zip files. 
 
 6. Open Visualisation_linguistique-master/stanford-tregex-2014-01-04/tregex.sh. Modify memory allocation: change "java -mx100m ..." to "java -mx1500m ..."
 
@@ -53,7 +53,7 @@ Fully integrated pipeline including text import from Moodle assignment zip file 
 Simplified metrics and created explanations to read each metric. 
 
 5/02/2020
-Updated readme. New *data* folder structure. 
+Updated readme. New *data* folder structure explained. 
 
 
 ## Credits, License and citations
