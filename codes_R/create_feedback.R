@@ -465,7 +465,7 @@ viz <- function(student_ID){
       
       
       
-      if(all(tab_indic$out[!(tab_indic$indic %in% c("W","NDW","T"))]=="non")){
+      if(all(tab_indic$out[!(tab_indic$indic %in% c("W\nText.size.words","T\nText.size.sent","NDW\nText.size.type"))]=="non")){
         
         grid.arrange(p, p1, tbl,
                      heights = c(2, 0.5),
