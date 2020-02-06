@@ -1,4 +1,4 @@
- readr
+readr
 quanteda
 readtext
 stringr
@@ -25,7 +25,7 @@ pkgTest <- function(x)
 
 
 list_requirements = c("readr", "quanteda", "readtext", "stringr", "spacyr", "tidyverse", "dplyr",
-                      "scales", "grid", "gridExtra", "magick","ggiraphExtra")
+                      "scales", "grid", "gridExtra", "magick")
 
 sapply(list_requirements, pkgTest)
 
