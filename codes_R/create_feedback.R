@@ -450,7 +450,7 @@ viz <- function(student_ID){
       
       
       
-      if(all(tab_indic$out=="non")){
+      if(all(tab_indic$out[!(tab_indic$indic %in% c("W","NDW","T"))]=="non")){
         
         grid.arrange(p, p1, tbl,
                      heights = c(2, 0.5),
@@ -461,7 +461,13 @@ viz <- function(student_ID){
         
       } else {
         
-        text = paste("You are off radar for the following indicators :", paste(  unlist(str_split(tab_indic$indic[which(tab_indic$out=="oui")] , pattern = "\n"))[2*(1:length(tab_indic$indic[which(tab_indic$out=="oui")]) )-1]   ,collapse=", "), sep = " ")
+        off_radar <- unlist(str_split(tab_indic$indic[which(tab_indic$out=="oui")] , pattern = "\n"))[2*(1:length(tab_indic$indic[which(tab_indic$out=="oui")]) )-1]
+        off_radar <- off_radar[!(off_radar %in% c("W","NDW","T") )]
+        
+        if(length(off_radar) ==1){
+          text = paste("You are off radar for the following indicator :", off_radar, ".", sep = " ")
+        } else { text = paste("You are off radar for the following indicators :", paste(off_radar,collapse=", "), ".", sep = " ") }
+        
         data.text <- ggplot() + 
           ggplot2::annotate("text", x = 0, y = 25, size=6, label=text) + 
           theme_bw() +
