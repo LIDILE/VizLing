@@ -9,7 +9,7 @@ library(ggplot2)
 library(scales)
 library(grid)
 library(gridExtra)
-library(ggiraphExtra) # pour coord_radar, fonction pour mettre le graphe en coordonn?es polaires et lin?ariser les segments incurv?s
+#library(ggiraphExtra) # pour coord_radar, fonction pour mettre le graphe en coordonnees polaires et lineariser les segments incurves
 library(magick)       # pour importer les pdf sous forme d'images
 
 
@@ -108,6 +108,21 @@ names(description) <- gsub(names(description), pattern = ".", replacement = " ",
 ############################################################## 
 #########    Partie visualisation
 ##############################################################
+
+
+
+###### Function from the package 'ggiraphExtra'
+
+coord_radar <- function (theta = "x", start = 0, direction = 1)
+{
+        theta <- match.arg(theta, c("x", "y"))
+        r <- if (theta == "x")
+                "y"
+        else "x"
+        ggproto("CoordRadar", ggplot2::CoordPolar, theta = theta, r = r, start = start,
+                direction = sign(direction),
+                is_linear = function(coord) TRUE)
+}
 
 
 ###### Mise en forme du tableau de description des variables
