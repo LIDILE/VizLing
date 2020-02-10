@@ -28,6 +28,6 @@ CP/T,"Average number of coordinate phrases per
 T-units",Sentence.coordination ,"The number of coordinate constructions in relation to the number of sentences, e.g. 
 The clause ""This experiment gives strong evidence and good results ..."" includes 
 ""and"" indicating coordination between ""evidence"" and ""results""."
-K,Yule’s K,Text.repetitions,"How many times you repeat words. 
+K,Yule's K,Text.repetitions,"How many times you repeat words. 
 The index is linked to the number of times you use each word in your text. 
 A small value indicates a rich vocabulary."
