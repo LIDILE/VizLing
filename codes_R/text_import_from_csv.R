@@ -36,6 +36,13 @@ if(CELVA.sp == TRUE){
 	}
 	df_sampleALE$doc_id <-sapply(df_sampleALE$Adresse.de.courriel,fun_prenom_nom)
 	
+	#if(col_language=="fr"){
+	#  df_sampleALE$doc_id <-sapply(df_sampleALE$Adresse.de.courriel,fun_prenom_nom)
+	#}
+	#if(col_language=="eng"){
+	#  df_sampleALE$doc_id <-sapply(df_sampleALE$Email.address,fun_prenom_nom)
+	#}
+	
 	#Assign  observations with 0 ID number with a new index number
 	index_zeros = which(df_sampleALE$doc_id==0)
 	df_sampleALE$doc_id[index_zeros] <- index_zeros   # 1:length(df_sampleALE$doc_id[which(df_sampleALE$doc_id==0)])
