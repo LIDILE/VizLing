@@ -34,14 +34,13 @@ if(CELVA.sp == TRUE){
 	nom = toupper(nom)
 	return(paste0(prenom,"_",nom))
 	}
-	df_sampleALE$doc_id <-sapply(df_sampleALE$Adresse.de.courriel,fun_prenom_nom)
 	
-	#if(col_language=="fr"){
-	#  df_sampleALE$doc_id <-sapply(df_sampleALE$Adresse.de.courriel,fun_prenom_nom)
-	#}
-	#if(col_language=="eng"){
-	#  df_sampleALE$doc_id <-sapply(df_sampleALE$Email.address,fun_prenom_nom)
-	#}
+	if("Adresse.de.courriel" %in% names(df_sampleALE)){
+	  df_sampleALE$doc_id <-sapply(df_sampleALE$Adresse.de.courriel,fun_prenom_nom)
+	}
+	if("Email.address" %in% names(df_sampleALE)){
+	  df_sampleALE$doc_id <-sapply(df_sampleALE$Email.address,fun_prenom_nom)
+	}
 	
 	#Assign  observations with 0 ID number with a new index number
 	index_zeros = which(df_sampleALE$doc_id==0)
