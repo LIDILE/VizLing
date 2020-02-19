@@ -42,7 +42,6 @@ parsedFiles = "ParsedFiles"
 
 data_from_csv = FALSE #true if .csv and FALSE if .zip from MOODLE
 CELVA.sp = FALSE      # true if .csv and from CELVA.sp
-col_language = "eng"  # "fr" or "eng"
 var_texte = "texte"   # name of the variable containing the text if .csv and not from CELVA.sp
 var_id = "id"         # name of the variable containing IDs if .csv and not from CELVA.sp
 
