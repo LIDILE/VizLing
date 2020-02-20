@@ -37,10 +37,9 @@ if(CELVA.sp == TRUE){
 	
 	if("Adresse.de.courriel" %in% names(df_sampleALE)){
 	  df_sampleALE$doc_id <-sapply(df_sampleALE$Adresse.de.courriel,fun_prenom_nom)
-	}
-	if("Email.address" %in% names(df_sampleALE)){
+	} else if("Email.address" %in% names(df_sampleALE)){
 	  df_sampleALE$doc_id <-sapply(df_sampleALE$Email.address,fun_prenom_nom)
-	}
+	} else{print("There is no column containing the students email adresses in your file or it is not well named."))
 	
 	#Assign  observations with 0 ID number with a new index number
 	index_zeros = which(df_sampleALE$doc_id==0)
