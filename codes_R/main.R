@@ -40,10 +40,12 @@ requirements_feedbacks = "requirements_feedbacks"
 path_feedbacks= "feedbacks"
 parsedFiles = "ParsedFiles"
 
-data_from_csv = FALSE #true if .csv and FALSE if .zip from MOODLE
+data_from_csv = FALSE #true if .csv and FALSE if .zip from MOODLE or .txt files
 CELVA.sp = FALSE      # true if .csv and from CELVA.sp
 var_texte = "texte"   # name of the variable containing the text if .csv and not from CELVA.sp
 var_id = "id"         # name of the variable containing IDs if .csv and not from CELVA.sp
+
+data_from_txt = F #true if .txt files and FALSE if .zip from MOODLE or .csv
 
 desc_stat_chart = "boxplot" # possible parameters: c("boxplot",  "violin",   "boxplot_point" )
 check_creat_directory(path_feedbacks)
@@ -56,11 +58,11 @@ unlink(paste0(project_directory,corpusALE), recursive = TRUE)
 #####                                 #####  
 ###########################################
 if (data_from_csv){
-  name_csv_file = "CELVA.Sp_398.csv"
+  name_csv_file = "CELVA_Sp.csv"
   source("codes_R/text_import_from_csv.R")
-}else{
-  source("codes_R/text_import.R")
-}
+} else if(data_from_txt){
+  source("codes_R/text_import_from_txt.R")
+} else {source("codes_R/text_import.R")}
 
 ###########################################
 #####                                 #####  
