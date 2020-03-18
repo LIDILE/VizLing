@@ -35,11 +35,16 @@ if(CELVA.sp == TRUE){
 	return(paste0(prenom,"_",nom))
 	}
 	
+	exit <- function() {.Internal(.invokeRestart(list(NULL, NULL), NULL))}
+	
 	if("Adresse.de.courriel" %in% names(df_sampleALE)){
 	  df_sampleALE$doc_id <-sapply(df_sampleALE$Adresse.de.courriel,fun_prenom_nom)
 	} else if("Email.address" %in% names(df_sampleALE)){
 	  df_sampleALE$doc_id <-sapply(df_sampleALE$Email.address,fun_prenom_nom)
-	} else{print("There is no column containing the students email adresses in your file or it is not well named."))
+	} else{
+	  print("There is no column containing the students email adresses in your file or it is not well named.")
+	  exit()    
+	}
 	
 	#Assign  observations with 0 ID number with a new index number
 	index_zeros = which(df_sampleALE$doc_id==0)
@@ -55,8 +60,9 @@ if(CELVA.sp == TRUE){
 	df_sampleALE <-subset(df_sampleALE, df_sampleALE$Acceptation_donnees=="Oui")
 	
 	## Correction annee de naissance
+	var_tps <- names(df_sampleALE)[which(names(df_sampleALE) %in% c("Date.ajout","Time.added"))]
 	for(i in which(nchar(df_sampleALE$Annee_naissance) != 4 & nchar(df_sampleALE$Age) == 2)){
-		df_sampleALE$Annee_naissance[i] <- as.character(as.numeric(substr( str_split(df_sampleALE[i,"Date.ajout"], pattern = " ")[[1]][4], 1, nchar(str_split(df_sampleALE[i,"Date.ajout"], pattern = " ")[[1]][4])-1)) - df_sampleALE$Age[i])
+		df_sampleALE$Annee_naissance[i] <- as.character(as.numeric(substr( str_split(df_sampleALE[i,var_tps], pattern = " ")[[1]][4], 1, nchar(str_split(df_sampleALE[i,"Date.ajout"], pattern = " ")[[1]][4])-1)) - df_sampleALE$Age[i])
 	}
 	for(i in which(nchar(df_sampleALE$Annee_naissance) != 4 & nchar(df_sampleALE$Age) != 2)){
 		df_sampleALE$Annee_naissance[i] <- NA
