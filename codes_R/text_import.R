@@ -23,27 +23,30 @@ if (!dir.exists(outDir)){
 setwd(outDir)
 
 manydirectories <- list.dirs()
-directorynames <- basename(manydirectories)
-directorynames <- directorynames[2:length(directorynames)]
 
-#names <- c()
-#text <- c()
-#for(i in 1:length(directorynames)){
-#  names[i] <- str_split(string = directorynames[i], pattern = "_")[[1]][1]
-#  names[i] <- gsub(" ", "_", names[i])
-#  
-#  text[i] <- paste(readLines(paste(outDir, directorynames[i],"onlinetext.html",sep = sep), warn=F), collapse="")
-#}
-
-names <- c()
-text <- c()
-for(i in 1:length(directorynames)){
-  names[i] <- str_split(string = directorynames[i], pattern = "_")[[1]][1]
-  names[i] <- gsub(" ", "_", names[i])
+if(length(manydirectories) > 1){
+  directorynames <- basename(manydirectories)
+  directorynames <- directorynames[2:length(directorynames)]
   
-  setwd(paste(outDir, directorynames[i],sep = sep))
-  text[i] <- paste(readLines(paste(outDir, directorynames[i],list.files(),sep = sep), warn=F), collapse="")
-  setwd(outDir)
+  names <- c()
+  text <- c()
+  for(i in 1:length(directorynames)){
+    names[i] <- str_split(string = directorynames[i], pattern = "_")[[1]][1]
+    names[i] <- gsub(" ", "_", names[i])
+    
+    setwd(paste(outDir, directorynames[i],sep = sep))
+    text[i] <- paste(readLines(paste(outDir, directorynames[i],list.files(),sep = sep), warn=F), collapse="")
+    setwd(outDir)
+  }
+} else {
+  names <- c()
+  text <- c()
+  for(i in 1:length(list.files())){
+    names[i] <- str_split(string = list.files()[i], pattern = "_")[[1]][1]
+    names[i] <- gsub(" ", "_", names[i])
+    
+    text[i] <- paste(readLines(paste(outDir,list.files()[i],sep = sep), warn=F), collapse="")
+  }
 }
 
 base_f <- data.frame(doc_id=names,text=text)
