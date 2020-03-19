@@ -62,7 +62,7 @@ if(CELVA.sp == TRUE){
 	## Correction annee de naissance
 	var_tps <- names(df_sampleALE)[which(names(df_sampleALE) %in% c("Date.ajout","Time.added"))]
 	for(i in which(nchar(df_sampleALE$Annee_naissance) != 4 & nchar(df_sampleALE$Age) == 2)){
-		df_sampleALE$Annee_naissance[i] <- as.character(as.numeric(substr( str_split(df_sampleALE[i,var_tps], pattern = " ")[[1]][4], 1, nchar(str_split(df_sampleALE[i,"Date.ajout"], pattern = " ")[[1]][4])-1)) - df_sampleALE$Age[i])
+		df_sampleALE$Annee_naissance[i] <- as.character(as.numeric(substr( str_split(df_sampleALE[i,var_tps], pattern = " ")[[1]][4], 1, nchar(str_split(df_sampleALE[i,var_tps], pattern = " ")[[1]][4])-1)) - df_sampleALE$Age[i])
 	}
 	for(i in which(nchar(df_sampleALE$Annee_naissance) != 4 & nchar(df_sampleALE$Age) != 2)){
 		df_sampleALE$Annee_naissance[i] <- NA
