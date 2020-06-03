@@ -77,7 +77,7 @@ names(df_sampleALE_allMetrics)[which(str_sub(names(df_sampleALE_allMetrics), sta
 write.csv(df_sampleALE_allMetrics, 
           file=paste0(metrics_SCA, sep, df_all_metrics), 
           row.names = FALSE)
-cat("-->> Finish script of calculating metrics!")
+cat("-->> Finish script of calculating metrics! \n")
 
 
 

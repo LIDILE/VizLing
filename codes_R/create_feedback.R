@@ -1,4 +1,6 @@
-#Visualisation of NS and NNS metrics
+cat("\n Creating personalized feedbacks \n")
+
+# Visualisation of NS and NNS metrics
 
 library(readtext)
 library(stringr)
@@ -519,6 +521,11 @@ student_ID <- df_sampleALE_allMetrics$document
 for(i in 1:length(student_ID)){
   nom <- student_ID[i]
   tfile <- paste(path_feedbacks,"/", nom, " ", Sys.Date() ,".pdf", sep="")
+  
+  print(paste0(round(i/n_students*100,1), "%", 
+               "| Creating feedback for : ", nom, "|", 
+               i, "/",  n_students, " ..."))
+  
   pdf(tfile,width=15,height=10)
   
   ## appel fonction de visualisation

@@ -40,12 +40,11 @@ requirements_feedbacks = "requirements_feedbacks"
 path_feedbacks= "feedbacks"
 parsedFiles = "ParsedFiles"
 
-data_from_csv = FALSE #true if .csv and FALSE if .zip from MOODLE or .txt files
-CELVA.sp = FALSE      # true if .csv and from CELVA.sp
-var_texte = "texte"   # name of the variable containing the text if .csv and not from CELVA.sp
-var_id = "id"         # name of the variable containing IDs if .csv and not from CELVA.sp
+data_origine = "from_csv"# "zip_from_moodle"#"from_txt" # possible values: c("from_csv", "from_txt", "zip_from_moodle")
 
-data_from_txt = F #true if .txt files and FALSE if .zip from MOODLE or .csv
+CELVA.sp = TRUE      # true if .csv and from CELVA.sp
+var_texte = "text"   # name of the variable containing the text if .csv and not from CELVA.sp
+var_id = "ID_etudiant"         # name of the variable containing IDs if .csv and not from CELVA.sp
 
 desc_stat_chart = "boxplot" # possible parameters: c("boxplot",  "violin",   "boxplot_point" )
 check_creat_directory(path_feedbacks)
@@ -57,12 +56,19 @@ unlink(paste0(project_directory,corpusALE), recursive = TRUE)
 #####   script0 : Query_data          #####   
 #####                                 #####  
 ###########################################
-if (data_from_csv){
-  name_csv_file = "CELVA_Sp.csv"
+
+if (data_origine == "from_csv"){
+  name_csv_file = "L1IC-meta-wave1.csv"
   source("codes_R/text_import_from_csv.R")
-} else if(data_from_txt){
+}else if (data_origine == "from_txt"){
   source("codes_R/text_import_from_txt.R")
-} else {source("codes_R/text_import.R")}
+}else if (data_origine == "zip_from_moodle") 
+{
+  source("codes_R/text_import.R")
+}else{
+  stop("inexist value about origine of data!\n thank you to select one the next values: 'from_csv', 'from_txt', 'zip_from_moodle'")
+}
+
 
 ###########################################
 #####                                 #####  
