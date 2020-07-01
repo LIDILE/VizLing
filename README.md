@@ -1,6 +1,6 @@
 # VizLing
 
-Visualisation_linguistique is a R program to compute and visualise linguistic profiles extracted from texts written by learners of English. Learner-specific Key Performance Indicators (KPI) are computed and displayed in the form of graphical information. Comparisons with control groups are possible.  
+VizLing is a R program to compute and visualise linguistic profiles extracted from texts written by learners of English. Learner-specific Key Performance Indicators (KPI) are computed and displayed in the form of graphical information. Comparisons with control groups are possible.  
 
 
 
