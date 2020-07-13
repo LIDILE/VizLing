@@ -83,6 +83,9 @@ df_NS_NNS_allMetrics$type2 <-as.factor(df_NS_NNS_allMetrics$type2)
 
 df_NS_NNS_allMetrics$K <- 1/df_NS_NNS_allMetrics$K
 
+
+### If you don't want the description of the indicators in the labels, please do not delete the "\n" in the labels
+
 names(df_NS_NNS_allMetrics) <- c("document","CTTR\nText.variation.words","W\nText.size.words","T\nText.size.sentence",
                                  "RIX\nSentence.difficulty","NDW\nText.size.type","MLT\nSentence.size",
                                  "CN/T\nSentence.complex_nominals","CP/T\nSentence.coordination",
@@ -93,6 +96,18 @@ names(df_NS_NNS_allMetrics) <- c("document","CTTR\nText.variation.words","W\nTex
 
 #names(df_NS_NNS_allMetrics) <- c("document","CTTR","W","T","RIX","NDW","MLT",
 #                                 "CN/T","CP/T","K","type1","type2")
+
+var_boxplot <- c("W\nText.size.words","T\nText.size.sentence","NDW\nText.size.type")
+
+
+
+
+## Bornes des indicateurs
+
+indic <- names(df_NS_NNS_allMetrics)[!(names(df_NS_NNS_allMetrics) %in% c("document","type1","type2")]
+#          "CTTR"  "W" "T" "RIX" "NDW" "MLT" "CN.T" "CP.T"  "1/K"        K dans [0;800]  ou [0;600]  
+minimum <- c(0.5,  15,  1,  1.5,   15,    5,     0,     0,   1/800)
+maximum <- c(  9, 900, 35,   15,  900,   40,     5,     3,    1/50)
 
 
 
@@ -229,12 +244,8 @@ viz <- function(student_ID){
   ###### Radar chart
   
   
-  ### Bornes indicateurs
+  ### Hors radar ou non pour les differents indicateurs
   
-  indic <- names(df_NS_NNS_9metrics)[2:(ncol(df_NS_NNS_9metrics)-2)]
-  #          "CTTR"  "W" "T" "RIX" "NDW" "MLT" "CN.T" "CP.T"  "1/K"        K dans [0;800]  ou [0;600]  
-  minimum <- c(0.5,  15,  1,  1.5,   15,    5,     0,     0,   1/800)
-  maximum <- c(  9, 900, 35,   15,  900,   40,     5,     3,    1/50)
   tab_indic <- data.frame(indic, minimum, maximum)
   tab_indic$indic <- as.character(tab_indic$indic)
   tab_indic$out <- NA
@@ -288,9 +299,19 @@ viz <- function(student_ID){
     
     tb <- df_NS_NNS_9metrics[which(df_NS_NNS_9metrics$type2==niv | df_NS_NNS_9metrics$type2=="student"),]
     
-    tb$`1/K\nText.repetitions` <- 1/tb$`1/K\nText.repetitions` 
-    #names(tb)[which(names(tb)=="1/K")] <- "K"
-    names(tb)[which(names(tb)=="1/K\nText.repetitions")] <- "K\nText.repetitions"
+    #if("1/K\nText.repetitions" %in% names(tb)){
+    #  tb$`1/K\nText.repetitions` <- 1/tb$`1/K\nText.repetitions` 
+    #  names(tb)[which(names(tb)=="1/K\nText.repetitions")] <- "K\nText.repetitions"
+    #}
+    #if("1/K" %in% names(tb)){
+    #  tb$`1/K` <- 1/tb$`1/K` 
+    #  names(tb)[which(names(tb)=="1/K")] <- "K"
+    #}
+    if( any(grepl("1/K", names(tb))) ){
+      tb[,names(tb)[grepl("1/K", names(tb))]] <- 1/tb[,names(tb)[grepl("1/K", names(tb))]]
+      names(tb)[grepl("1/K", names(tb))] <- gsub(pattern = "1/K", replacement = "K", x = names(tb)[grepl("1/K", names(tb))])
+    }
+    
     
     #tb <- aggregate(tb[,tab_indic$indic], by = list(group = tb[,"type2"]), FUN = median)
     tb <- aggregate(tb[,names(tb)[2:(ncol(tb)-2)]], by = list(group = tb[,"type2"]), FUN = median)
@@ -328,7 +349,9 @@ viz <- function(student_ID){
       
       dd_norm <- df_NS_NNS_9metrics_norm[which(df_NS_NNS_9metrics_norm$type2==niv | df_NS_NNS_9metrics_norm$type2=="student"),]
       
-      radar <- aggregate(dd_norm[,tab_indic$indic[which(tab_indic$out=="non" & tab_indic$indic != "W\nText.size.words"  & tab_indic$indic != "T\nText.size.sentence" & tab_indic$indic != "NDW\nText.size.type")]], by = list(group = dd_norm[,"type2"]), FUN = median)
+      #radar <- aggregate(dd_norm[,tab_indic$indic[which(tab_indic$out=="non" & tab_indic$indic != "W\nText.size.words"  & tab_indic$indic != "T\nText.size.sentence" & tab_indic$indic != "NDW\nText.size.type")]], by = list(group = dd_norm[,"type2"]), FUN = median)
+      radar <- aggregate(dd_norm[,tab_indic$indic[which(tab_indic$out=="non" & !(tab_indic$indic %in% var_boxplot)  )]], by = list(group = dd_norm[,"type2"]), FUN = median)
+
       
       radar_bis <- as.data.frame(t(radar))
       radar_bis$indic <- row.names(radar_bis)
@@ -338,10 +361,12 @@ viz <- function(student_ID){
       radar_bis[,which(names(radar_bis)==niv)] <- as.numeric(as.character(radar_bis[,which(names(radar_bis)==niv)]))
       radar_bis$student <- as.numeric(as.character(radar_bis$student))
       
-      q1 <- unlist( lapply(dd_norm[which(dd_norm$type2!="student"),tab_indic$indic[which(tab_indic$out=="non" & tab_indic$indic != "W\nText.size.words"  & tab_indic$indic != "T\nText.size.sentence" & tab_indic$indic != "NDW\nText.size.type")]], function(z){quantile(z, probs=c(0.25))}))
-      
-      q3 <- unlist( lapply(dd_norm[which(dd_norm$type2!="student"),tab_indic$indic[which(tab_indic$out=="non" & tab_indic$indic != "W\nText.size.words"  & tab_indic$indic != "T\nText.size.sentence" & tab_indic$indic != "NDW\nText.size.type")]], function(z){quantile(z, probs=c(0.75))}))
-      
+      #q1 <- unlist( lapply(dd_norm[which(dd_norm$type2!="student"),tab_indic$indic[which(tab_indic$out=="non" & tab_indic$indic != "W\nText.size.words"  & tab_indic$indic != "T\nText.size.sentence" & tab_indic$indic != "NDW\nText.size.type")]], function(z){quantile(z, probs=c(0.25))}))
+      q1 <- unlist( lapply(dd_norm[which(dd_norm$type2!="student"),tab_indic$indic[which(tab_indic$out=="non" &  !(tab_indic$indic %in% var_boxplot) )]], function(z){quantile(z, probs=c(0.25))}))
+
+      #q3 <- unlist( lapply(dd_norm[which(dd_norm$type2!="student"),tab_indic$indic[which(tab_indic$out=="non" & tab_indic$indic != "W\nText.size.words"  & tab_indic$indic != "T\nText.size.sentence" & tab_indic$indic != "NDW\nText.size.type")]], function(z){quantile(z, probs=c(0.75))}))
+      q3 <- unlist( lapply(dd_norm[which(dd_norm$type2!="student"),tab_indic$indic[which(tab_indic$out=="non" &  !(tab_indic$indic %in% var_boxplot) )]], function(z){quantile(z, probs=c(0.75))}))
+
       radar_bis$lower <- q1
       radar_bis$upper <- q3
       
@@ -389,7 +414,8 @@ viz <- function(student_ID){
       
       
       ddc <- df_NS_NNS_9metrics[which(df_NS_NNS_9metrics$type2==niv | df_NS_NNS_9metrics$type2=="student"),]
-      ddc <- ddc[,c("document","W\nText.size.words","T\nText.size.sentence","NDW\nText.size.type","type2")]
+      #ddc <- ddc[,c("document","W\nText.size.words","T\nText.size.sentence","NDW\nText.size.type","type2")]
+      ddc <- ddc[,c("document",var_boxplot,"type2")]
       
       ddc_byVar <-gather(ddc,  key = "Metric", 
                          value = "Value", -c("document","type2")
@@ -467,7 +493,8 @@ viz <- function(student_ID){
       
       
       
-      if(all(tab_indic$out[!(tab_indic$indic %in% c("W\nText.size.words","T\nText.size.sent","NDW\nText.size.type"))]=="non")){
+      #if(all(tab_indic$out[!(tab_indic$indic %in% c("W\nText.size.words","T\nText.size.sent","NDW\nText.size.type"))]=="non")){
+      if(all(tab_indic$out[!(tab_indic$indic %in% var_boxplot)]=="non")){  
         
         grid.arrange(p, p1, tbl,
                      heights = c(2, 0.5),
@@ -479,7 +506,7 @@ viz <- function(student_ID){
       } else {
         
         off_radar <- unlist(str_split(tab_indic$indic[which(tab_indic$out=="oui")] , pattern = "\n"))[2*(1:length(tab_indic$indic[which(tab_indic$out=="oui")]) )-1]
-        off_radar <- off_radar[!(off_radar %in% c("W","NDW","T") )]
+        off_radar <- off_radar[!(off_radar %in% unlist(str_split(var_boxplot , pattern = "\n"))[2*(1:length(var_boxplot) )-1] )]
         
         if(length(off_radar) ==1){
           text = paste("You are off radar for the following indicator :", off_radar, ".", sep = " ")
