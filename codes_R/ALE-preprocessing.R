@@ -12,6 +12,7 @@ cleanFun <- function(htmlString) {
 }
 df_sampleALE$text <- cleanFun(df_sampleALE$text)
 df_sampleALE$text <- gsub("&amp;", " ", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("&nbsp;", " ", df_sampleALE$text, fixed=TRUE)
 
 
 ## On enleve/modifie les caracteres speciaux
