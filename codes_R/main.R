@@ -26,6 +26,11 @@ if (os == "Windows"){
   sep = "/"
 }
 
+nch = nchar(project_directory)
+last_ch = substr(project_directory, nch,nch)
+if (last_ch != sep){
+  project_directory = paste0(project_directory, sep)
+}
 setwd(project_directory)
 
 corpusALE = "corpusALE" 
