@@ -543,6 +543,7 @@ viz <- function(student_ID){
 
 ###### Creation des fichiers de feedback
 student_ID <- df_sampleALE_allMetrics$document 
+n_students = length(student_ID) 
 
 
 for(i in 1:length(student_ID)){
