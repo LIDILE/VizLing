@@ -103,8 +103,7 @@ var_boxplot <- c("W\nText.size.words","T\nText.size.sentence","NDW\nText.size.ty
 
 
 ## Bornes des indicateurs
-
-indic <- names(df_NS_NNS_allMetrics)[!(names(df_NS_NNS_allMetrics) %in% c("document","type1","type2")]
+indic <- names(df_NS_NNS_allMetrics)[!(names(df_NS_NNS_allMetrics) %in% c("document","type1","type2"))]
 #          "CTTR"  "W" "T" "RIX" "NDW" "MLT" "CN.T" "CP.T"  "1/K"        K dans [0;800]  ou [0;600]  
 minimum <- c(0.5,  15,  1,  1.5,   15,    5,     0,     0,   1/800)
 maximum <- c(  9, 900, 35,   15,  900,   40,     5,     3,    1/50)
@@ -544,7 +543,6 @@ viz <- function(student_ID){
 ###### Creation des fichiers de feedback
 student_ID <- df_sampleALE_allMetrics$document 
 n_students = length(student_ID) 
-
 
 for(i in 1:length(student_ID)){
   nom <- student_ID[i]
