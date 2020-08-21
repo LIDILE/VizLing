@@ -29,6 +29,8 @@ if (os == "Windows"){
   library(progress)
   
   registerDoMC(cores = numCores) # make a fork cluster
+
+  numCores<- max(1,min(detectCores() -2, detectCores()))
   
 }
 
@@ -38,9 +40,6 @@ if (last_ch != sep){
   project_directory = paste0(project_directory, sep)
 }
 setwd(project_directory)
-
-numCores<- max(1,min(detectCores() -2, detectCores()))
-
 
 corpusALE = "corpusALE" 
 corpus_from_data = "corpus_from_data"
