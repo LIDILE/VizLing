@@ -26,7 +26,6 @@ if (os == "Windows"){
   sep = "/"
   library(doParallel)
   library(doMC) # It works only on linux
-  library(foreach)
   library(progress)
   
   registerDoMC(cores = numCores) # make a fork cluster
@@ -40,7 +39,7 @@ if (last_ch != sep){
 }
 setwd(project_directory)
 
-numCores<-5 # max(1,min(detectCores() -2, detectCores()))
+numCores<- max(1,min(detectCores() -2, detectCores()))
 
 
 corpusALE = "corpusALE" 
@@ -100,10 +99,9 @@ source("codes_R/ALE-preprocessing.R")
 ###########################################
 
 unlink(paste0(project_directory,parsedFiles), recursive = TRUE) # delete old directory if exist
-t1=system.time(
+
 source("codes_R/make_parsed_files.R")
-)
-print(t1)
+
 ###########################################
 #####                                 #####  
 #####   script3 : ALE all metrics     #####   
@@ -117,7 +115,4 @@ source("codes_R/ALE-all-metrics.R")
 #####   script4 : Feedback            #####   
 #####                                 #####  
 ###########################################
-t2=system.time(
 source("codes_R/create_feedback.R")
-)
-print(t2)
