@@ -563,23 +563,7 @@ if (os == "Windows"){
     fun_viz(i)
   }
 }else{
-  pb <- progress_bar$new(
-    format = "letter = :letter [:bar] :elapsed | eta: :eta",
-    total = iterations,   
-    width = 60)
-  
-  progress_letter <- rep(LETTERS[1:10], 10)  # token reported in progress bar
-  
-  # allowing progress bar to be used in foreach -----------------------------
-  progress <- function(n){
-    pb$tick(tokens = list(letter = progress_letter[n]))
-  } 
-  
-  # opts <- list(progress = progress)
-  
-  foreach(i=1:iterations, .combine = rbind) %dopar% {
-    progress(i)
-    Sys.sleep(1/20)
+  foreach(i=1:iterations) %dopar% {
     fun_viz(i)
   }
 }

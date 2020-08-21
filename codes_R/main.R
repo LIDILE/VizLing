@@ -27,11 +27,11 @@ if (os == "Windows"){
   library(doParallel)
   library(doMC) # It works only on linux
   library(progress)
-  
-  registerDoMC(cores = numCores) # make a fork cluster
 
   numCores<- max(1,min(detectCores() -2, detectCores()))
   
+  registerDoMC(cores = numCores) # make a fork cluster
+
 }
 
 nch = nchar(project_directory)
