@@ -184,7 +184,9 @@ im_plot <- image_ggplot(img)
 ###### Fonction de visualisation
 
 viz <- function(student_ID){
-  
+  require(stringr)
+  require(gridExtra)
+  require(magick)
   # On ne garde que l'etudiant concerne
   df_NS_NNS_9metrics <- df_NS_NNS_allMetrics[which(str_sub(df_NS_NNS_allMetrics$document,1,2)=="w1" | df_NS_NNS_allMetrics$document==student_ID),]
   
@@ -420,29 +422,6 @@ viz <- function(student_ID){
                          value = "Value", -c("document","type2")
       )
       
-      if(desc_stat_chart=="boxplot_point"){
-        p1 <- ggplot(ddc_byVar[which(ddc_byVar$type2==niv),]) +
-          geom_boxplot(aes(x=Metric, y=Value, fill="")) +
-          scale_fill_manual(name="",values=c("white"), labels=c("Boxplot of control group")) +
-          geom_jitter(aes(x=Metric, y=Value, size ="student of control group"), position= position_jitter(0.4)) +
-          geom_hline(data = ddc_byVar[which(ddc_byVar$type=="student"),], aes(yintercept = Value, color=""), size = 1) +
-          facet_wrap(~Metric,scales = "free", drop = FALSE) + 
-          #facet_wrap(~Metric,scales = "free", drop = FALSE, ncol=1) + 
-          #theme(legend.position = "bottom") +
-          ggtitle(paste0("Boxplots : Student vs. ", names(radar_bis_bis)[1])) +
-          xlab("") +
-          scale_colour_manual(name = "", labels = c("student"), values=c("orange")) +
-          theme(plot.title = element_text(hjust = 0.5))  +
-          #coord_flip() +
-          guides(color = guide_legend(order = 1)) + 
-          theme(legend.position="bottom",
-                #legend.box = "vertical",
-                legend.text=element_text(size=12),
-                plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13)) +
-          theme(legend.title=element_blank())
-      }
-      
       if(desc_stat_chart=="boxplot"){
         p1 <- ggplot(ddc_byVar[which(ddc_byVar$type2==niv),]) +
           geom_boxplot(aes(x=Metric, y=Value, fill="")) +
@@ -463,9 +442,28 @@ viz <- function(student_ID){
                 legend.text=element_text(size=12),
                 plot.title=element_text(size=20),
                 axis.text.x = element_text(size = 13))
-      }
-      
-      if(desc_stat_chart=="violin"){
+      }else if(desc_stat_chart=="boxplot_point"){
+        p1 <- ggplot(ddc_byVar[which(ddc_byVar$type2==niv),]) +
+          geom_boxplot(aes(x=Metric, y=Value, fill="")) +
+          scale_fill_manual(name="",values=c("white"), labels=c("Boxplot of control group")) +
+          geom_jitter(aes(x=Metric, y=Value, size ="student of control group"), position= position_jitter(0.4)) +
+          geom_hline(data = ddc_byVar[which(ddc_byVar$type=="student"),], aes(yintercept = Value, color=""), size = 1) +
+          facet_wrap(~Metric,scales = "free", drop = FALSE) + 
+          #facet_wrap(~Metric,scales = "free", drop = FALSE, ncol=1) + 
+          #theme(legend.position = "bottom") +
+          ggtitle(paste0("Boxplots : Student vs. ", names(radar_bis_bis)[1])) +
+          xlab("") +
+          scale_colour_manual(name = "", labels = c("student"), values=c("orange")) +
+          theme(plot.title = element_text(hjust = 0.5))  +
+          #coord_flip() +
+          guides(color = guide_legend(order = 1)) + 
+          theme(legend.position="bottom",
+                #legend.box = "vertical",
+                legend.text=element_text(size=12),
+                plot.title=element_text(size=20),
+                axis.text.x = element_text(size = 13)) +
+          theme(legend.title=element_blank())
+      }else if(desc_stat_chart=="violin"){
         p1 <- ggplot(ddc_byVar[which(ddc_byVar$type2==niv),]) +
           geom_violin(aes(x=Metric, y=Value, fill="")) +
           geom_boxplot(aes(x=Metric, y=Value, fill=""), width=0.1) +
@@ -539,19 +537,16 @@ viz <- function(student_ID){
 }
 
 
-
-###### Creation des fichiers de feedback
 student_ID <- df_sampleALE_allMetrics$document 
-n_students = length(student_ID) 
+iterations <- length(student_ID)
 
-for(i in 1:length(student_ID)){
+fun_viz <- function(i){
   nom <- student_ID[i]
   tfile <- paste(path_feedbacks,"/", nom, " ", Sys.Date() ,".pdf", sep="")
   
-  print(paste0(round(i/n_students*100,1), "%", 
+  print(paste0(round(i/iterations*100,1), "%", 
                "| Creating feedback for : ", nom, "|", 
-               i, "/",  n_students, " ..."))
-  
+               i, "/",  iterations, " ..."))
   pdf(tfile,width=15,height=10)
   
   ## appel fonction de visualisation
@@ -560,3 +555,58 @@ for(i in 1:length(student_ID)){
   
   dev.off()
 }
+
+
+
+if (os == "Windows"){
+  for(i in 1:iterations){
+    fun_viz(i)
+  }
+}else{
+  pb <- progress_bar$new(
+    format = "letter = :letter [:bar] :elapsed | eta: :eta",
+    total = iterations,   
+    width = 60)
+  
+  progress_letter <- rep(LETTERS[1:10], 10)  # token reported in progress bar
+  
+  # allowing progress bar to be used in foreach -----------------------------
+  progress <- function(n){
+    pb$tick(tokens = list(letter = progress_letter[n]))
+  } 
+  
+  # opts <- list(progress = progress)
+  
+  foreach(i=1:iterations, .combine = rbind) %dopar% {
+    progress(i)
+    Sys.sleep(1/20)
+    fun_viz(i)
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

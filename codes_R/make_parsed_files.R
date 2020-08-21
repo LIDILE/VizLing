@@ -1,10 +1,5 @@
 library("readtext")
-division = function(x,y){
-  if (x==0 | y==0){
-    return (0)
-  }
-  return (x/y)
-}
+division = function(x,y){ifelse(y==0, 0, x/y)}
 
 if (os == "Windows"){
   #Stanford parser
@@ -123,7 +118,6 @@ check_creat_directory(output_path_parsed)
 fields=c("W","S","VP","C","T","DC","CT","CP","CN","MLS","MLT","MLC","C/S","VP/T",
          "C/T", "DC/C", "DC/T", "T/S", "CT/T", "CP/T", "CP/C", "CN/T", "CN/C")
 
-metrics = data.frame()
 
 #process text files in the directory one by one
 #process text files in the directory one by one
@@ -138,15 +132,12 @@ text_files = paste0(num_name_sorted, ".txt")
 
 files_size = length(text_files)
 
-rownames_metrics = c()
-index = 1
-#filename_text = text_files[127]
-for (filename_text in text_files){
-  rownames_metrics = c(rownames_metrics, filename_text)
+parse_file = function(index){
+  filename_text = text_files[index]
   setwd(paste0(project_directory,"stanford-parser-full-2014-01-04"))
   
   print(paste0(round(index/files_size*100,1), "%", 
-               "|Processing file", filename_text, "|", 
+               "|Processing file ", filename_text, "|", 
                index, "/",  files_size, " ..."))
   
   parsedFile = paste0(output_path_parsed, unlist(strsplit(filename_text, "\\."))[1], "_Rparsed.txt")
@@ -217,15 +208,26 @@ for (filename_text in text_files){
   for (ratio in c(mls,mlt,mlc,c_s,vp_t,c_t,dc_c,dc_t,t_s,ct_t,cp_t,cp_c,cn_t,cn_c)){
     row_metrics = c(row_metrics, round(ratio,4))
   }
-  
-  
+  row_metrics = data.frame(row_metrics)
+  colnames(row_metrics) = unlist(strsplit(filename_text, ".txt"))
+  return (row_metrics)
   #write output string to output file
-  metrics = rbind(metrics, row_metrics)
-  index = index +1
+  #metrics = rbind(metrics, row_metrics)
 }
 
+iterations = length(text_files)
+
+metrics = data.frame(parse_file(1)) # first file i=1 which is used to creat the data frame "metrics"
+
+for (i in 2:iterations){
+    res = parse_file(i)
+    metrics = cbind(metrics, res)
+  }
+
+
+metrics = t(metrics)
 colnames(metrics) = fields
-rownames(metrics) = rownames_metrics
+
 write.csv(metrics, file = paste0(project_directory,"metrics_SCA", sep,"metrics_SCA.csv"), row.names = TRUE)
 
 cat("-->>Finish parsed files ! \n")

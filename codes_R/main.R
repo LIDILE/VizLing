@@ -22,8 +22,15 @@ if (os == "Windows"){
   project_directory = "P:\\suivi_projets\\VisLang\\Visualisation_linguistique\\" 
   sep = "\\"
 }else{
-  project_directory = "~/Documents/Thomas/MaRecherche/SoftwareApplications/Visualisation_linguistique/"
+  project_directory = "/home/knefati/Documents/MyWork-Ensai/R-projects/VizLing"   #"~/Documents/Thomas/MaRecherche/SoftwareApplications/Visualisation_linguistique/"
   sep = "/"
+  library(doParallel)
+  library(doMC) # It works only on linux
+  library(foreach)
+  library(progress)
+  
+  registerDoMC(cores = numCores) # make a fork cluster
+  
 }
 
 nch = nchar(project_directory)
@@ -32,6 +39,9 @@ if (last_ch != sep){
   project_directory = paste0(project_directory, sep)
 }
 setwd(project_directory)
+
+numCores<-5 # max(1,min(detectCores() -2, detectCores()))
+
 
 corpusALE = "corpusALE" 
 corpus_from_data = "corpus_from_data"
@@ -47,7 +57,7 @@ parsedFiles = "ParsedFiles"
 
 data_origine = "from_csv"# "zip_from_moodle"#"from_txt" # possible values: c("from_csv", "from_txt", "zip_from_moodle")
 
-CELVA.sp = TRUE      # true if .csv and from CELVA.sp
+CELVA.sp = TRUE      # FALSE # true if .csv and from CELVA.sp
 var_texte = "text"   # name of the variable containing the text if .csv and not from CELVA.sp
 var_id = "ID_etudiant"         # name of the variable containing IDs if .csv and not from CELVA.sp
 
@@ -63,7 +73,7 @@ unlink(paste0(project_directory,corpusALE), recursive = TRUE)
 ###########################################
 
 if (data_origine == "from_csv"){
-  name_csv_file = "L1IC-meta-wave1.csv"
+  name_csv_file = "test3.csv"
   source("codes_R/text_import_from_csv.R")
 }else if (data_origine == "from_txt"){
   source("codes_R/text_import_from_txt.R")
@@ -90,8 +100,10 @@ source("codes_R/ALE-preprocessing.R")
 ###########################################
 
 unlink(paste0(project_directory,parsedFiles), recursive = TRUE) # delete old directory if exist
+t1=system.time(
 source("codes_R/make_parsed_files.R")
-
+)
+print(t1)
 ###########################################
 #####                                 #####  
 #####   script3 : ALE all metrics     #####   
@@ -105,5 +117,7 @@ source("codes_R/ALE-all-metrics.R")
 #####   script4 : Feedback            #####   
 #####                                 #####  
 ###########################################
-
+t2=system.time(
 source("codes_R/create_feedback.R")
+)
+print(t2)
