@@ -75,11 +75,10 @@ if (data_origine == "from_csv"){
   source("codes_R/text_import_from_csv.R")
 }else if (data_origine == "from_txt"){
   source("codes_R/text_import_from_txt.R")
-}else if (data_origine == "zip_from_moodle") 
-{
+}else if (data_origine == "zip_from_moodle") {
   source("codes_R/text_import.R")
 }else{
-  stop("inexist value about origine of data!\n thank you to select one the next values: 'from_csv', 'from_txt', 'zip_from_moodle'")
+  stop("Non-existing value for the origin of your data !\n Please select one the following values: 'from_csv', 'from_txt', 'zip_from_moodle'")
 }
 
 
