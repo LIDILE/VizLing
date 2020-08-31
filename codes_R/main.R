@@ -28,7 +28,7 @@ if (os == "Windows"){
   library(doMC) # It works only on linux
   library(progress)
 
-  numCores<- max(1,min(detectCores() -2, detectCores()))
+  numCores<- max(1, detectCores() -2)
   
   registerDoMC(cores = numCores) # make a fork cluster
 
