@@ -33,7 +33,7 @@ corpus_sampleALE <-corpus(df_sampleALE, text_field = "text")
 
 
 #Tokenise
-corpus_sampleALE_tokens <- tokens(corpus_sampleALE)
+corpus_sampleALE_tokens <- tokens(corpus_sampleALE, remove_punct=TRUE)
 
 #construct a document-feature matrix. One line per student text. 
 sampleALE_dfm  <- dfm(corpus_sampleALE_tokens)
@@ -41,13 +41,20 @@ sampleALE_dfm  <- dfm(corpus_sampleALE_tokens)
 #Remove specific features from dfm (stopwords)
 sampleALE_dfm <- dfm_select(sampleALE_dfm, stopwords('en'), selection = 'remove')
 
-sampleALE_dfm <- dfm_remove(sampleALE_dfm, c('(',')',':','.','/',',','"'))   # ; ?
-
+# sampleALE_dfm <- dfm_remove(sampleALE_dfm, c('(',')',':','.','/',',','"'))   # ; ?
+measures_lex <- c("TTR", "C", "R", "CTTR", "U", "S", "Maas")
 sampleALE_lexdiv <- textstat_lexdiv(sampleALE_dfm, 
-                                    measure = c("all", "TTR", "C", "R", "CTTR", "U", "S", "Maas","K"), 
+                                    measure = c("all", measures_lex, "K"), 
                                     log.base = 10)
 
-
+# replace NaN by min/max value
+for (measure in measures_lex){
+  pos_NaN <- is.nan(sampleALE_lexdiv[[measure]])
+  sampleALE_lexdiv[[measure]][pos_NaN] <- 0
+}
+# replace k=0 by a big value
+pos_zero_k = which(sampleALE_lexdiv[['K']]==0)
+sampleALE_lexdiv[['K']][pos_zero_k] = 1e+6
 #Syntactic complexity metrics
 df_sampleALE_syntcompl <- read.csv(paste0(metrics_SCA,sep, paste0(metrics_SCA,".csv")), 
                                    row.names=1, stringsAsFactors=FALSE)
