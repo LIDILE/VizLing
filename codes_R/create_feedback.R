@@ -18,7 +18,7 @@ library(magick)       # pour importer les pdf sous forme d'images
 ## Importation de la cohorte temoin et des etudiants a comparer
 setwd(project_directory)
 
-df_sampleALE_allMetrics <- read.csv(paste0(metrics_SCA,sep,"df_sampleALE_allMetrics.csv"), stringsAsFactors = FALSE)
+df_sampleALE_allMetrics <- read.csv(paste0(metrics_SCA,sep, df_all_metrics), stringsAsFactors = FALSE)
 
 
 df_control_cohort_allMetrics <-  read.csv(paste0(requirements_feedbacks,sep,"cohort_df_sampleALE_allMetrics.csv"), stringsAsFactors = FALSE)
@@ -51,14 +51,7 @@ df_sampleALE_allMetrics$type2 <- "student"
 
 df_control_cohort_allMetrics$type1 <- "control cohort"
 df_control_cohort_allMetrics$type2 <- df_control_cohort_allMetrics$CECR.niveau
-df_control_cohort_allMetrics <- df_control_cohort_allMetrics[which(is.na(df_control_cohort_allMetrics$type2)==F),]
-
-
-
-## Creation NDW
-df_sampleALE_allMetrics$NDW <- round(df_sampleALE_allMetrics$TTR * df_sampleALE_allMetrics$W)
-df_control_cohort_allMetrics$NDW <- round(df_control_cohort_allMetrics$TTR * df_control_cohort_allMetrics$W)
-
+df_control_cohort_allMetrics <- df_control_cohort_allMetrics[which(!is.na(df_control_cohort_allMetrics$type2)),]
 
 
 ## Merge final

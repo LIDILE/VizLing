@@ -1,7 +1,6 @@
 
 options(java.parameters = "-Xmx8000m")   # permet a R d'utiliser plus de RAM
 
-
 df_sampleALE$text <- gsub('\"\"', '\"', df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- str_squish(df_sampleALE$text) # Trim whitespace from a string
 

@@ -16,7 +16,7 @@ counter = function(out_command){
   }
 }
 
-os = get_sys_name()
+os = get_sys_name() 
 if (os == "Windows"){
   
   project_directory = "P:\\suivi_projets\\VisLang\\Visualisation_linguistique\\" 
@@ -28,7 +28,7 @@ if (os == "Windows"){
   library(doMC) # It works only on linux
   library(progress)
 
-  numCores<- max(1, detectCores() -2)
+  numCores<-  max(1, detectCores() -2)
   
   registerDoMC(cores = numCores) # make a fork cluster
 
@@ -53,17 +53,25 @@ requirements_feedbacks = "requirements_feedbacks"
 path_feedbacks= "feedbacks"
 parsedFiles = "ParsedFiles"
 
-data_origine = "from_csv"# "zip_from_moodle"#"from_txt" # possible values: c("from_csv", "from_txt", "zip_from_moodle")
+# data_origine = "from_csv"# "zip_from_moodle"#"from_txt" # possible values: c("from_csv", "from_txt", "zip_from_moodle")
 
-CELVA.sp = TRUE      # FALSE # true if .csv and from CELVA.sp
-var_texte = "text"   # name of the variable containing the text if .csv and not from CELVA.sp
-var_id = "ID_etudiant"         # name of the variable containing IDs if .csv and not from CELVA.sp
+CELVA.sp = FALSE #TRUE #FALSE #TRUE      # FALSE # true if .csv and from CELVA.sp
 
 desc_stat_chart = "boxplot" # possible parameters: c("boxplot",  "violin",   "boxplot_point" )
 check_creat_directory(path_feedbacks)
 
 unlink(paste0(project_directory,corpusALE), recursive = TRUE)
 
+choice_data_origine = 0
+while (!choice_data_origine %in% 1:3){
+  choice_data_origine <- as.integer(readline(prompt="Specify the origin of your data, select one choice:\n
+                           [1] : from CSV file\n
+                           [2] : from text file\n
+                           [3] / from zip moodle file"))
+}
+
+data_origine_possibilities <- c("from_csv", "from_txt", "zip_from_moodle")
+data_origine = data_origine_possibilities[choice_data_origine]
 ###########################################
 #####                                 #####  
 #####   script0 : Query_data          #####   
@@ -71,7 +79,11 @@ unlink(paste0(project_directory,corpusALE), recursive = TRUE)
 ###########################################
 
 if (data_origine == "from_csv"){
-  name_csv_file = "test3.csv"
+  # name_csv_file = "celva.csv"
+  name_csv_file <-readline(prompt="Enter file name (like example.csv): ")
+  var_texte <- readline(prompt="Enter the name of texts column in your CSV file : ")
+  var_id <- readline(prompt="Enter the name of students identification column in your CSV file : ")
+  
   source("codes_R/text_import_from_csv.R")
 }else if (data_origine == "from_txt"){
   source("codes_R/text_import_from_txt.R")
@@ -80,6 +92,9 @@ if (data_origine == "from_csv"){
 }else{
   stop("Non-existing value for the origin of your data !\n Please select one the following values: 'from_csv', 'from_txt', 'zip_from_moodle'")
 }
+
+# var_texte = "text"   # name of the variable containing the text if .csv and not from CELVA.sp
+# var_id = "ID_etudiant"         # name of the variable containing IDs if .csv and not from CELVA.sp
 
 
 ###########################################
