@@ -30,8 +30,6 @@ df_control_cohort_allMetrics <-  read.csv(paste0(requirements_feedbacks,sep,"coh
 # df_control_cohort_allMetrics$document <- as.character(df_control_cohort_allMetrics$document)
 
 
-
-
 #  merge avec metadata
 # df_sampleALE  <-read.csv("P:/suivi_projets/VisLang/Visualisation_linguistique/data/from_csv/CELVA.Sp_398_metadata.csv",
 #                                                     encoding="UTF-8")

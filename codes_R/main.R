@@ -53,8 +53,6 @@ requirements_feedbacks = "requirements_feedbacks"
 path_feedbacks= "feedbacks"
 parsedFiles = "ParsedFiles"
 
-# data_origine = "from_csv"# "zip_from_moodle"#"from_txt" # possible values: c("from_csv", "from_txt", "zip_from_moodle")
-
 CELVA.sp = FALSE #TRUE #FALSE #TRUE      # FALSE # true if .csv and from CELVA.sp
 
 desc_stat_chart = "boxplot" # possible parameters: c("boxplot",  "violin",   "boxplot_point" )

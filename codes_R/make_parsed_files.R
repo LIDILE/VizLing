@@ -5,7 +5,6 @@ extract_words = function(lst_anot_word){
   return(strsplit(unlist(strsplit(lst_anot_word, split = " ")),")")[[2]])
 }
 
-
 if (os == "Windows"){
   #Stanford parser
   appli_parser="lexparser.bat"

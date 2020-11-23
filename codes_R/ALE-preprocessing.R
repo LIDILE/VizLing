@@ -33,9 +33,6 @@ df_sampleALE$text <- gsub("etc..", "etc.", df_sampleALE$text, fixed=TRUE)
 #df_sampleALE$text <- gsub("etc.", "...", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub("[][]|[^[:ascii:]]", " ", df_sampleALE$text, perl=T)  # enlève   \u2190 \u2192 ...
 
-
-
-
 ## Transformation ponctuation/espace
 
 # creer espaces autour de ponctuation, reduire espaces, supprimer espaces non desires

@@ -37,11 +37,6 @@ if (CELVA.sp){
 corpus_sampleALE <-corpus(df_sampleALE, text_field = "text")
 
 
-
-# compute and plot lexical complexity metrics
-# A document-feature matrix object must first be created, which implies tokenisation. With the dfm we clean and compute occurrences. Finally, with occurrences we can compute metrics such as TTR.
-
-#
 ndw = function(txt){
   return(length(unique(tokens(txt, remove_punct=TRUE)$text1)))
 }
