@@ -53,7 +53,7 @@ requirements_feedbacks = "requirements_feedbacks"
 path_feedbacks= "feedbacks"
 parsedFiles = "ParsedFiles"
 
-CELVA.sp = FALSE #TRUE #FALSE #TRUE      # FALSE # true if .csv and from CELVA.sp
+CELVA.sp = TRUE# FALSE #TRUE #FALSE #TRUE      # FALSE # true if .csv and from CELVA.sp
 
 desc_stat_chart = "boxplot" # possible parameters: c("boxplot",  "violin",   "boxplot_point" )
 check_creat_directory(path_feedbacks)

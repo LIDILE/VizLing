@@ -1,4 +1,5 @@
 library("readtext")
+library("qdapDictionaries") # english dictionary 
 division = function(x,y){ifelse(y==0, 0, x/y)}
 
 extract_words = function(lst_anot_word){
@@ -119,7 +120,7 @@ check_creat_directory(output_path_parsed)
 ####################
 
 #write a list of 24 comma-delimited fields to the output file
-fields=c("W", "NDW","S","VP","C","T","DC","CT","CP","CN","MLS","MLT","MLC","C/S","VP/T",
+fields=c("W", "NDW","NDWC","S","VP","C","T","DC","CT","CP","CN","MLS","MLT","MLC","C/S","VP/T",
          "C/T", "DC/C", "DC/T", "T/S", "CT/T", "CP/T", "CP/C", "CN/T", "CN/C")
 
 
@@ -173,11 +174,14 @@ parse_file = function(index){
   #content=infile.read()
   annotated_words <- regmatches(content_infile, gregexpr("\\([A-Z]+\\$? [^\\)\\(]+\\)", content_infile, perl=TRUE))$text
   words <- unname(sapply(annotated_words, extract_words))
-  w <- length(words)
-  ndw <- length(unique(words))
+  words_unique <- unique(words) 
   
-  #add frequencies of words and other structures to output string
-  row_metrics = c(w, ndw)
+  w <- length(words) # number of words
+  ndw <- length(words_unique) # number of unique word
+  ndwc <- sum(unname(sapply(words_unique, function(w) w %in% GradyAugmented))) # number of unique words include in dictionary
+  
+  # add frequencies of words and other structures to output string
+  row_metrics = c(w, ndw, ndwc)
   
   for (count in patterncount[1:8]){
     row_metrics = c(row_metrics, as.numeric(count))

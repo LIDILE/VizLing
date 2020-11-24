@@ -12,15 +12,7 @@ library(dplyr)
 df_sampleALE <- read.csv(paste0(project_directory,"data",sep,"from_csv",sep,name_csv_file), 
                          stringsAsFactors=FALSE,
                          encoding = 'UTF-8')
-colnames_df = names(df_sampleALE)
-var_texte <- readline(prompt="Enter the name of texts column in your CSV file : ")
-while (!var_texte %in% colnames_df) {
-  var_texte <- readline(prompt="Column name not found!, enter the name of texts column in your CSV file : ")
-}
-var_id <- readline(prompt="Enter the name of students identification column in your CSV file : ")
-while (! var_id%in% colnames_df) {
-  var_id <- readline(prompt="Column name not found, enter the name of students identification column in your CSV file : ")
-}
+
 if(CELVA.sp == TRUE){
 
 	df_sampleALE$text <- paste(df_sampleALE$Texte_etudiant_1, df_sampleALE$Texte_etudiant_2, sep='')
@@ -79,23 +71,25 @@ if(CELVA.sp == TRUE){
 
 } else {
 
-	if(var_texte != "text"){
+  colnames_df = names(df_sampleALE)
+  var_texte <- readline(prompt="Enter the name of texts column in your CSV file : ")
+  while (!var_texte %in% colnames_df) {
+    var_texte <- readline(prompt="Column name not found!, enter the name of texts column in your CSV file : ")
+  }
+  var_id <- readline(prompt="Enter the name of students identification column in your CSV file : ")
+  while (! var_id%in% colnames_df) {
+    var_id <- readline(prompt="Column name not found, enter the name of students identification column in your CSV file : ")
+  }
+  
+	df_sampleALE$text <- df_sampleALE[,var_texte] 
 
-		df_sampleALE$text <- df_sampleALE[,var_texte] 
+	df_sampleALE$text <- gsub('\"\"', '\"', df_sampleALE$text, fixed=TRUE)
+	df_sampleALE$text <- str_squish(df_sampleALE$text) # Trim whitespace from a string
 	
-		df_sampleALE$text <- gsub('\"\"', '\"', df_sampleALE$text, fixed=TRUE)
-		df_sampleALE$text <- str_squish(df_sampleALE$text) # Trim whitespace from a string
-		
-		df_sampleALE[,var_texte] <- NULL
+	df_sampleALE[,var_texte] <- NULL
 	
-	}
+	df_sampleALE$doc_id <- df_sampleALE[,var_id] 
 
-	if(var_id != "doc_id"){
-
-		df_sampleALE$doc_id <- df_sampleALE[,var_id] 
-
-		df_sampleALE[,var_id] <- NULL
-	
-	}
+	df_sampleALE[,var_id] <- NULL
 
 }
