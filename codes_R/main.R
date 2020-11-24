@@ -77,11 +77,10 @@ data_origine = data_origine_possibilities[choice_data_origine]
 ###########################################
 
 if (data_origine == "from_csv"){
-  # name_csv_file = "celva.csv"
   name_csv_file <-readline(prompt="Enter file name (like example.csv): ")
-  var_texte <- readline(prompt="Enter the name of texts column in your CSV file : ")
-  var_id <- readline(prompt="Enter the name of students identification column in your CSV file : ")
-  
+  while(! name_csv_file %in% list.files("data/from_csv")){
+    name_csv_file <-readline(prompt="File not found!, enter file name (like example.csv): ")
+  }
   source("codes_R/text_import_from_csv.R")
 }else if (data_origine == "from_txt"){
   source("codes_R/text_import_from_txt.R")

@@ -12,7 +12,15 @@ library(dplyr)
 df_sampleALE <- read.csv(paste0(project_directory,"data",sep,"from_csv",sep,name_csv_file), 
                          stringsAsFactors=FALSE,
                          encoding = 'UTF-8')
-
+colnames_df = names(df_sampleALE)
+var_texte <- readline(prompt="Enter the name of texts column in your CSV file : ")
+while (!var_texte %in% colnames_df) {
+  var_texte <- readline(prompt="Column name not found!, enter the name of texts column in your CSV file : ")
+}
+var_id <- readline(prompt="Enter the name of students identification column in your CSV file : ")
+while (! var_id%in% colnames_df) {
+  var_id <- readline(prompt="Column name not found, enter the name of students identification column in your CSV file : ")
+}
 if(CELVA.sp == TRUE){
 
 	df_sampleALE$text <- paste(df_sampleALE$Texte_etudiant_1, df_sampleALE$Texte_etudiant_2, sep='')
