@@ -53,7 +53,7 @@ requirements_feedbacks = "requirements_feedbacks"
 path_feedbacks= "feedbacks"
 parsedFiles = "ParsedFiles"
 
-CELVA.sp = TRUE# FALSE #TRUE #FALSE #TRUE      # FALSE # true if .csv and from CELVA.sp
+CELVA.sp =  FALSE      # FALSE # true if .csv and from CELVA.sp
 
 desc_stat_chart = "boxplot" # possible parameters: c("boxplot",  "violin",   "boxplot_point" )
 check_creat_directory(path_feedbacks)
@@ -65,7 +65,7 @@ while (!choice_data_origine %in% 1:3){
   choice_data_origine <- as.integer(readline(prompt="Specify the origin of your data, select one choice:\n
                            [1] : from CSV file\n
                            [2] : from text file\n
-                           [3] / from zip moodle file"))
+                           [3] : from zip moodle file"))
 }
 
 data_origine_possibilities <- c("from_csv", "from_txt", "zip_from_moodle")
@@ -77,9 +77,9 @@ data_origine = data_origine_possibilities[choice_data_origine]
 ###########################################
 
 if (data_origine == "from_csv"){
-  name_csv_file <-readline(prompt="Enter file name (like example.csv): ")
+  name_csv_file <-readline(prompt="Enter file name (such as example.csv): ")
   while(! name_csv_file %in% list.files("data/from_csv")){
-    name_csv_file <-readline(prompt="File not found!, enter file name (like example.csv): ")
+    name_csv_file <-readline(prompt="File not found!, enter file name (such as example.csv): ")
   }
   source("codes_R/text_import_from_csv.R")
 }else if (data_origine == "from_txt"){
