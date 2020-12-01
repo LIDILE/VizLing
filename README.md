@@ -42,6 +42,9 @@ Rscript codes_R/main.R
 ```
 The visualisations are created in /feedbacks. One .pdf per student. 
 
+NB : If you use the project directly in R Studio, please click on the "Source" button after opening the script "main.R".
+
+
 ## Change log
 
 10/10/2019 
