@@ -229,9 +229,11 @@ iterations = length(text_files)
 if (os == "Windows"){
   
   metrics = data.frame(parse_file(1)) # first file i=1 which is used to creat the data frame "metrics"
-  for (i in 2:iterations){
-    res = parse_file(i)
-    metrics = cbind(metrics, res)
+  if(iterations > 1){
+    for (i in 2:iterations){
+      res = parse_file(i)
+      metrics = cbind(metrics, res)
+    }
   }
 }else{
   metrics = foreach(i=1:iterations, .combine = cbind) %dopar% {
