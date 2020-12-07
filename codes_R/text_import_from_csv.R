@@ -80,16 +80,22 @@ if(CELVA.sp == TRUE){
   while (! var_id%in% colnames_df) {
     var_id <- readline(prompt="Column name not found, enter the name of students identification column in your CSV file : ")
   }
-  
-	df_sampleALE$text <- df_sampleALE[,var_texte] 
-
-	df_sampleALE$text <- gsub('\"\"', '\"', df_sampleALE$text, fixed=TRUE)
-	df_sampleALE$text <- str_squish(df_sampleALE$text) # Trim whitespace from a string
 	
-	df_sampleALE[,var_texte] <- NULL
-	
-	df_sampleALE$doc_id <- df_sampleALE[,var_id] 
-
-	df_sampleALE[,var_id] <- NULL
+  if(var_texte != "text"){
+    df_sampleALE$text <- df_sampleALE[,var_texte] 
+    
+    df_sampleALE$text <- gsub('\"\"', '\"', df_sampleALE$text, fixed=TRUE)
+    df_sampleALE$text <- str_squish(df_sampleALE$text) # Trim whitespace from a string
+    
+    df_sampleALE[,var_texte] <- NULL
+  } else {
+    df_sampleALE$text <- gsub('\"\"', '\"', df_sampleALE$text, fixed=TRUE)
+    df_sampleALE$text <- str_squish(df_sampleALE$text) # Trim whitespace from a string
+  }
+  if(var_id != "doc_id"){
+	  df_sampleALE$doc_id <- df_sampleALE[,var_id] 
+	  
+	  df_sampleALE[,var_id] <- NULL
+  }
 
 }
