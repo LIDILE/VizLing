@@ -13,6 +13,17 @@ df_sampleALE$text <- cleanFun(df_sampleALE$text)
 df_sampleALE$text <- gsub("&amp;", " ", df_sampleALE$text, fixed=TRUE)
 df_sampleALE$text <- gsub("&nbsp;", " ", df_sampleALE$text, fixed=TRUE)
 
+df_sampleALE$text <- gsub("â€™", "'", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("â€¦", "...", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("â€œ", "", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("â€\u009d", "", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub('\"', "", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("\t", " ", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("’", "'", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("‘", "'", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("“", "", df_sampleALE$text, fixed=TRUE)
+df_sampleALE$text <- gsub("”", "", df_sampleALE$text, fixed=TRUE)
+
 
 ## On enleve/modifie les caracteres speciaux
 df_sampleALE$text <- gsub('\n', " ", df_sampleALE$text, fixed=TRUE)
