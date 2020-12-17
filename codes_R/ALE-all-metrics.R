@@ -28,7 +28,7 @@ df_sampleALE_readability <-textstat_readability(df_sampleALE$text, measure = c("
 
 df_sampleALE_readability$document <-df_sampleALE$doc_id
 if (CELVA.sp){
-  df_sampleALE_readability$CECR.niveau <- df_sampleALE$Note_dialang_ecrit
+  df_sampleALE_readability$CECR.niveau <- df_sampleALE$CECR.niveau
 }
 
 
