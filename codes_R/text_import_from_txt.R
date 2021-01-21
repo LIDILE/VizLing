@@ -7,7 +7,7 @@ library(stringr)
 library(spacyr)
 library(tidyverse)
 library(dplyr)
-### Dossier ? l'archive zip de Moodle a été placée
+
 fullpath <- paste0(project_directory, "data", sep,"from_txt")
 setwd(fullpath)
 
