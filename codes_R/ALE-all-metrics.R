@@ -28,7 +28,7 @@ df_sampleALE_readability <-textstat_readability(df_sampleALE$text, measure = c("
 
 df_sampleALE_readability$document <-df_sampleALE$doc_id
 if (CELVA.sp){
-  df_sampleALE_readability$CECR.niveau <- df_sampleALE$CECR.niveau
+  df_sampleALE_readability$CECR.niveau <- df_sampleALE$CECR.niveau   # these levels must be added in CELVA.sp before the use of Vizling
 }
 
 
