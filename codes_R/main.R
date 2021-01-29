@@ -23,6 +23,7 @@ if (os == "Windows"){
   sep = "\\"
 }else{
   project_directory = "/home/user/VizLing"  
+  sep = "/"
   library(doParallel)
   library(doMC) # It works only on linux
   library(progress)
