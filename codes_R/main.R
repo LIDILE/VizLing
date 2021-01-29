@@ -19,11 +19,10 @@ counter = function(out_command){
 os = get_sys_name() 
 if (os == "Windows"){
   
-  project_directory = "P:\\suivi_projets\\VisLang\\Visualisation_linguistique\\" 
+  project_directory = "D:\\VisLang" 
   sep = "\\"
 }else{
-  project_directory = "/home/knefati/Documents/MyWork-Ensai/R-projects/VizLing"   #"~/Documents/Thomas/MaRecherche/SoftwareApplications/Visualisation_linguistique/"
-  sep = "/"
+  project_directory = "/home/user/VizLing"  
   library(doParallel)
   library(doMC) # It works only on linux
   library(progress)
@@ -70,6 +69,7 @@ while (!choice_data_origine %in% 1:3){
 
 data_origine_possibilities <- c("from_csv", "from_txt", "zip_from_moodle")
 data_origine = data_origine_possibilities[choice_data_origine]
+
 ###########################################
 #####                                 #####  
 #####   script0 : Query_data          #####   
