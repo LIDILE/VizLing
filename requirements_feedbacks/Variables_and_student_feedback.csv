@@ -1,0 +1,45 @@
+Variable,Description,Category,Interpretation
+CTTR ,Carroll's Corrected Type Token ratio,Word.diversity.ratio(types),"The number of different words relative to the actual number of words in the text.
+It gives an idea of vocabulary diversity.
+Find synonyms : http://www.synonymy.com/"
+W,Number of words,Text.size.count(W),"The size of the text in terms of words.
+Prepare your writing : https://www.grammar-quizzes.com/writingsum.html"
+CT,"Complex T-Units
+(include dependent clauses)",Text.hypotaxis.count(CT),"The number of sentences containing finite dependent clauses in the text such as verb-controlled
+that complement clause : “I think that it is a good book” and wh- complement clauses : “You told me what I wanted to hear”
+as well as finite relative clauses : “I like the book which is on the table” .
+Note that Biber (1999) shows that grammatical complexity varies in relation to clause structures and also noun phrase structures.
+See complement clauses : https://www.grammar-quizzes.com/clause.html#subordinated
+See relative clauses : https://www.grammar-quizzes.com/clausesum.html"
+T,T-Units (sentences),Text.size.count(T-Units),The size of the text in terms of sentences called T-units. 
+NDW,Number of different words,Text.size.count(types),"The size of the text in terms of different words, also called types. e.g. “the car in the street” includes 4 types and 5 words."
+MLT,Mean Length of T-units (sentences),Sentence.size.mean(words),"The average size of all the sentences in the text. Avoid very long sentences.
+See punctuation guidelines : https://www.grammar-quizzes.com/puncsum.html"
+1/K,Inverse of Yule’s K,Word.repetitions.ratio(types),"The number of times each word type is repeated in the text.
+The higher the better. It means less repetitions.
+See word formation guidelines : https://dictionary.cambridge.org/grammar/british-grammar/word-formation_2 "
+DC/C,"Number of finite clauses
+relative to the number of clauses",Clause.hypotaxis.ratio(DC),"The rate of finite clauses compared to the number of all types of clauses (subordinated or not).
+It gives an idea of the level of hypotaxis relative to the number of clauses.
+The higher the more syntactically complex the text is. 
+However it is not the only indicator of syntactic complexity. 
+Non-finite clauses can also be used as well as complex noun phrases.
+See clause elements : https://www.grammar-quizzes.com/sentsum.html#clauseelements"
+DC/T,"Number of finite clauses
+relative to the number of sentences",Sentence.hypotaxis.ratio(DC),"The rate of finite clauses compared to the number of all the sentences in the text.
+It gives an idea of the level of syntactic complexity.
+The higher it is the higher proficiency tend to be.
+See clause structure : https://www.grammar-quizzes.com/sent-clauses.html#clause"
+1/Dickes.Steiwer,Inverse of a readability index,"Sentence.size.mean(words)
+Word.diversity.ratio(types)
+Word.size.mean(characters)","A combination of measurements of the difficulty in reading the text.
+The higher it is, the higher proficiency tends to be.
+The learner needs to increase the length of sentences as well as the diversity and length of words. "
+FOG.NRI,Readability index,"Word.morphology.rate(3-syllables)
+Word.morphology.rate(3syllables)
+Sentence.size.mean(words)","A combination of measurements for the difficulty in reading a text.
+The higher it is the high the level of proficiency tends to be.
+See word formation guidelines : https://dictionary.cambridge.org/grammar/british-grammar/word-formation_2 "
+Coleman.C2,Readability index,"Word.size.ratio(sentences)
+Word.morphology.rate(1syllables)","A combination of measurements for the difficulty in reading a text.
+The longer the sentences and the more there are one syllable words, the higher the indicator is. "
