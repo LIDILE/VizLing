@@ -26,22 +26,17 @@ df_control_cohort_allMetrics <-  read.csv(paste0(requirements_feedbacks,sep,"coh
 
 
 
-# df_sampleALE_allMetrics$document <-as.character(df_sampleALE_allMetrics$document)
-# df_control_cohort_allMetrics$document <- as.character(df_control_cohort_allMetrics$document)
-
-
-#  merge avec metadata
-# df_sampleALE  <-read.csv("P:/suivi_projets/VisLang/Visualisation_linguistique/data/from_csv/CELVA.Sp_398_metadata.csv",
-#                                                     encoding="UTF-8")
-# colnames(df_sampleALE)[1] = "id_etudiant"
-# 
-# 
-# df_sampleALE_allMetrics_test <- merge(df_sampleALE, df_sampleALE_allMetrics, by="id_etudiant")
-# 
-# 
 
 
 df_control_cohort_allMetrics$document <- paste("w1",c(1:nrow(df_control_cohort_allMetrics)), sep = "_")
+
+
+
+names(df_sampleALE_allMetrics)[which(names(df_sampleALE_allMetrics) %in% c("C.S","VP.T","C.T","DC.C","DC.T","T.S","CT.T","CP.T","CP.C","CN.T","CN.C"))] <- c("C/S","VP/T","C/T","DC/C","DC/T","T/S","CT/T","CP/T","CP/C","CN/T","CN/C")
+
+names(df_control_cohort_allMetrics)[which(names(df_control_cohort_allMetrics) %in% c("C.S","VP.T","C.T","DC.C","DC.T","T.S","CT.T","CP.T","CP.C","CN.T","CN.C"))] <- c("C/S","VP/T","C/T","DC/C","DC/T","T/S","CT/T","CP/T","CP/C","CN/T","CN/C")
+
+
 
 
 df_sampleALE_allMetrics$type1 <- "student"
@@ -52,17 +47,15 @@ df_control_cohort_allMetrics$type2 <- df_control_cohort_allMetrics$CECR.niveau
 df_control_cohort_allMetrics <- df_control_cohort_allMetrics[which(!is.na(df_control_cohort_allMetrics$type2)),]
 
 
-## Merge final
-df_sampleALE_allMetrics <- df_sampleALE_allMetrics[,c("document","CTTR","W","T",
-                                                      "RIX","NDW",
-                                                      "MLT",
-                                                      "CN.T","CP.T","K",
+
+
+## Merge final : W has to be kept for visualisation
+df_sampleALE_allMetrics <- df_sampleALE_allMetrics[,c("document","CTTR","NDW","W","K","T","FOG.NRI","DC/C",
+                                                      "Coleman.C2","Dickes.Steiwer","MLT","DC/T","CT",
                                                       "type1","type2")]
 
-df_control_cohort_allMetrics <- df_control_cohort_allMetrics[,c("document","CTTR","W","T",
-                                                                "RIX","NDW",
-                                                                "MLT",
-                                                                "CN.T","CP.T","K",
+df_control_cohort_allMetrics <- df_control_cohort_allMetrics[,c("document","CTTR","NDW","W","K","T","FOG.NRI","DC/C",
+                                                                "Coleman.C2","Dickes.Steiwer","MLT","DC/T","CT",
                                                                 "type1","type2")]
 
 df_NS_NNS_allMetrics <-rbind(df_control_cohort_allMetrics, df_sampleALE_allMetrics)
@@ -72,38 +65,61 @@ df_NS_NNS_allMetrics$type1 <-as.factor(df_NS_NNS_allMetrics$type1)
 df_NS_NNS_allMetrics$type2 <-as.factor(df_NS_NNS_allMetrics$type2)
 
 
-df_NS_NNS_allMetrics$K <- 1/df_NS_NNS_allMetrics$K
 
 
-### If you don't want the description of the indicators in the labels, please do not delete the "\n" in the labels
+#list_metrics <- names(df_NS_NNS_allMetrics)[-c(1,length(names(df_NS_NNS_allMetrics))-1,length(names(df_NS_NNS_allMetrics)))]
 
-names(df_NS_NNS_allMetrics) <- c("document","CTTR\nText.variation.words","W\nText.size.words","T\nText.size.sentence",
-                                 "RIX\nSentence.difficulty","NDW\nText.size.type","MLT\nSentence.size",
-                                 "CN/T\nSentence.complex_nominals","CP/T\nSentence.coordination",
-                                 "1/K\nText.repetitions","type1","type2")
+if("K" %in% names(df_NS_NNS_allMetrics)){
+  df_NS_NNS_allMetrics$K <- 1/df_NS_NNS_allMetrics$K
+  names(df_NS_NNS_allMetrics)[which(names(df_NS_NNS_allMetrics)=="K")] <- "1/K"
+}
+if("Dickes.Steiwer" %in% names(df_NS_NNS_allMetrics)){
+  df_NS_NNS_allMetrics$Dickes.Steiwer <- 1/df_NS_NNS_allMetrics$Dickes.Steiwer
+  names(df_NS_NNS_allMetrics)[which(names(df_NS_NNS_allMetrics)=="Dickes.Steiwer")] <- "1/Dickes.Steiwer"
+}
 
-#names(df_NS_NNS_allMetrics) <- c("document","CTTR","W","T","RIX","NDW","MLT",
-#                                 "CN/T","CP/T","1/K","type1","type2")
+list_metrics <- names(df_NS_NNS_allMetrics)[-c(1,length(names(df_NS_NNS_allMetrics))-1,length(names(df_NS_NNS_allMetrics)))]
 
-#names(df_NS_NNS_allMetrics) <- c("document","CTTR","W","T","RIX","NDW","MLT",
-#                                 "CN/T","CP/T","K","type1","type2")
 
-var_boxplot <- c("W\nText.size.words","T\nText.size.sentence","NDW\nText.size.type")
+
+### If you don't want to add some description of the indicators in the labels, please comment lines 98 to 113
+
+names(df_NS_NNS_allMetrics) <- c("document",
+                                 "Word diversity\n(CTTR)",
+                                 "Text size\n(NDW)",
+                                 "Text size\n(W)",
+                                 "Word repetition\n(1/K)",
+                                 "Text size\n(T)",
+                                 "Word morphology + Sentence size\n(FOG.NRI)",
+                                 "Clause hypotaxis\n(DC/C)",
+                                 "Word size&morphology\n(Coleman.C2)",
+                                 "Word diversity&size + Sentence size\n(1/Dickes.Steiwer)",
+                                 "Sentence size \n(MLT)",
+                                 "Sentence hypotaxis\n(DC/T)",
+                                 "Text hypotaxis\n(CT)",
+                                 "type1","type2")
+
+# Here you have to choose which variables will be displayed in box plots
+var_boxplot <- c("Text size\n(W)","Text size\n(T)","Text size\n(NDW)","Text hypotaxis\n(CT)")
+
 
 
 
 
 ## Bornes des indicateurs
 indic <- names(df_NS_NNS_allMetrics)[!(names(df_NS_NNS_allMetrics) %in% c("document","type1","type2"))]
-#          "CTTR"  "W" "T" "RIX" "NDW" "MLT" "CN.T" "CP.T"  "1/K"        K dans [0;800]  ou [0;600]  
-minimum <- c(0.5,  15,  1,  1.5,   15,    5,     0,     0,   1/800)
-maximum <- c(  9, 900, 35,   15,  900,   40,     5,     3,    1/50)
+
+#          "CTTR"  "NDW"  "W"  "1/K"  "T"  "FOG.NRI"  "DC/C"  "Coleman.C2"  "1/Dickes.Steiwer"  "MLT"  "DC/T"   "CT"
+minimum <- c(0.5,    15,   15, 1/800,   1,        0,      0,            20,             -0.005,    5,      0,      1)
+maximum <- c(  9,   900,  900,  1/50,  35,      150,      1,            80,                  0,   40,      2,     35)
+
+# These borns have to be carefully chosen and in harmony with your reference dataset
 
 
 
 ## Import  description des variables
 
-description <- read.csv(paste0(requirements_feedbacks,"/","Variables_and_student_feedback.csv"), fileEncoding = "UTF-8")
+description <- read.csv(paste0(requirements_feedbacks,"/","Variables_and_student_feedback.csv"), fileEncoding = "UTF-8", stringsAsFactors = F)
 names(description) <- gsub(names(description), pattern = ".", replacement = " ", fixed = T)
 
 
@@ -139,7 +155,7 @@ theme_desc <- gridExtra::ttheme_default(
               padding = unit(c(4, 6), "mm")),
   colhead = list(fg_params=list(cex = 1)),
   rowhead = list(fg_params=list(cex = 1)),
-  base_size = 12)
+  base_size = 9.5)
 
 
 ###### Tableau de description des variables
@@ -193,12 +209,14 @@ viz <- function(student_ID){
   
   text <- as.character(df_sampleALE$text[which(df_sampleALE$doc_id == student_ID)])
   
+  W_name <- names(df_NS_NNS_allMetrics)[ which(list_metrics=="W") +1]
+  
   # Mise en page selon le nombre de mots du texte pour un meilleur affichage
-  if(df_NS_NNS_9metrics$W[which(df_NS_NNS_9metrics$document==student_ID)] > 450){
+  if(df_NS_NNS_9metrics[,W_name][which(df_NS_NNS_9metrics$document==student_ID)] > 450){
     fontsize_var <- 12
     xmin <- -0.68
     var_width = 120
-  } else if(df_NS_NNS_9metrics$W[which(df_NS_NNS_9metrics$document==student_ID)] <= 450 & df_NS_NNS_9metrics$W[which(df_NS_NNS_9metrics$document==student_ID)] > 200){
+  } else if(df_NS_NNS_9metrics[,W_name][which(df_NS_NNS_9metrics$document==student_ID)] <= 450 & df_NS_NNS_9metrics[,W_name][which(df_NS_NNS_9metrics$document==student_ID)] > 200){
     fontsize_var <- 15
     xmin <- -0.8
     var_width = 120
@@ -229,7 +247,7 @@ viz <- function(student_ID){
   ###### Graphique tableau de description des indicateurs
   
   grid.arrange(top=textGrob("Table of the indicators of linguistic richness", x=0.5, y=-0.1, gp=gpar(fontsize=30,font=50)), gr,
-               bottom=textGrob("3", x=0.5, y=2, hjust=0, gp=gpar( fontface="italic")))
+               bottom=textGrob("3", x=0.5, y=1.25, hjust=0, gp=gpar( fontface="italic")))
   
   
   
@@ -291,24 +309,40 @@ viz <- function(student_ID){
     
     tb <- df_NS_NNS_9metrics[which(df_NS_NNS_9metrics$type2==niv | df_NS_NNS_9metrics$type2=="student"),]
     
-    #if("1/K\nText.repetitions" %in% names(tb)){
-    #  tb$`1/K\nText.repetitions` <- 1/tb$`1/K\nText.repetitions` 
-    #  names(tb)[which(names(tb)=="1/K\nText.repetitions")] <- "K\nText.repetitions"
+    #if( any(grepl("1/K", names(tb))) ){
+    #  tb[,names(tb)[grepl("1/K", names(tb))]] <- 1/tb[,names(tb)[grepl("1/K", names(tb))]]
+    #  names(tb)[grepl("1/K", names(tb))] <- gsub(pattern = "1/K", replacement = "K", x = names(tb)[grepl("1/K", names(tb))])
     #}
-    #if("1/K" %in% names(tb)){
-    #  tb$`1/K` <- 1/tb$`1/K` 
-    #  names(tb)[which(names(tb)=="1/K")] <- "K"
+    #if( any(grepl("1/Dickes.Steiwer", names(tb))) ){
+    #  tb[,names(tb)[grepl("1/Dickes.Steiwer", names(tb))]] <- 1/tb[,names(tb)[grepl("1/Dickes.Steiwer", names(tb))]]
+    #  names(tb)[grepl("1/Dickes.Steiwer", names(tb))] <- gsub(pattern = "1/Dickes.Steiwer", replacement = "Dickes.Steiwer", x = names(tb)[grepl("1/Dickes.Steiwer", names(tb))])
     #}
-    if( any(grepl("1/K", names(tb))) ){
-      tb[,names(tb)[grepl("1/K", names(tb))]] <- 1/tb[,names(tb)[grepl("1/K", names(tb))]]
-      names(tb)[grepl("1/K", names(tb))] <- gsub(pattern = "1/K", replacement = "K", x = names(tb)[grepl("1/K", names(tb))])
+    
+
+    tb <- aggregate(tb[,names(tb)[2:(ncol(tb)-2)]], by = list(group = tb[,"type2"]), FUN = median)
+    levels(tb$group)[1:6] <- paste("median of", levels(tb$group)[1:6])
+    names(tb)[-1] <- list_metrics
+    
+    #tb[,2:ncol(tb)] <- round(tb[,2:ncol(tb)],2)
+    
+    for(j in 2:ncol(tb)){
+      if( any(grepl("1/", names(tb)[j])) ){
+        tb[,j] <- 1/tb[,j]
+        tb[,j] <- round(tb[,j],2)
+        
+        if(any(tb[,j] < 0)){
+          tb[which(tb[,j] >= 0),j] <- paste0("1/", tb[which(tb[,j] >= 0),j])
+          tb[which(tb[,j]  < 0),j] <- paste0("-1/", -tb[which(tb[,j]  < 0),j])
+        } else { tb[,j] <- paste0("1/", as.character(tb[,j]))}
+        
+      
+      } else{tb[,j] <- round(tb[,j],2)}
     }
     
     
-    #tb <- aggregate(tb[,tab_indic$indic], by = list(group = tb[,"type2"]), FUN = median)
-    tb <- aggregate(tb[,names(tb)[2:(ncol(tb)-2)]], by = list(group = tb[,"type2"]), FUN = median)
-    tb[,2:ncol(tb)] <- round(tb[,2:ncol(tb)],2)
-    levels(tb$group)[1:6] <- paste("median of", levels(tb$group)[1:6])
+    
+    
+    
     
     tbl <- tableGrob(tb, rows=NULL, theme=tt2)
     
@@ -400,7 +434,8 @@ viz <- function(student_ID){
               #legend.box = "vertical",
               legend.text=element_text(size=12),
               plot.title=element_text(size=20),
-              axis.text.x = element_text(size = 8)) +
+              #axis.text.x = element_text(size = 8)) +   
+              axis.text.x = element_text(size = 6, face = "bold")) +
         guides(color = guide_legend(order = 1))
       
       
@@ -423,7 +458,7 @@ viz <- function(student_ID){
           #facet_wrap(~Metric,scales = "free", drop = FALSE, ncol=1) + 
           #theme(legend.position = "bottom") +
           ggtitle(paste0("Boxplots : Student vs. ", names(radar_bis_bis)[1])) +
-          xlab("") +
+          xlab("") + 
           scale_colour_manual(name = "", labels = c("student"), values=c("orange")) +
           theme(plot.title = element_text(hjust = 0.5))  +
           #coord_flip() +
@@ -432,7 +467,8 @@ viz <- function(student_ID){
                 #legend.box = "vertical",
                 legend.text=element_text(size=12),
                 plot.title=element_text(size=20),
-                axis.text.x = element_text(size = 13))
+                strip.text = element_text(face = "bold"),
+                axis.text.x=element_blank())
       }else if(desc_stat_chart=="boxplot_point"){
         p1 <- ggplot(ddc_byVar[which(ddc_byVar$type2==niv),]) +
           geom_boxplot(aes(x=Metric, y=Value, fill="")) +
@@ -450,7 +486,7 @@ viz <- function(student_ID){
           guides(color = guide_legend(order = 1)) + 
           theme(legend.position="bottom",
                 #legend.box = "vertical",
-                legend.text=element_text(size=12),
+                legend.text=element_text(size=12, face = "bold"),
                 plot.title=element_text(size=20),
                 axis.text.x = element_text(size = 13)) +
           theme(legend.title=element_blank())
@@ -493,8 +529,9 @@ viz <- function(student_ID){
         
       } else {
         
-        off_radar <- unlist(str_split(tab_indic$indic[which(tab_indic$out=="oui")] , pattern = "\n"))[2*(1:length(tab_indic$indic[which(tab_indic$out=="oui")]) )-1]
-        off_radar <- off_radar[!(off_radar %in% unlist(str_split(var_boxplot , pattern = "\n"))[2*(1:length(var_boxplot) )-1] )]
+        off_radar <- list_metrics[which(tab_indic$out=="oui")]
+        off_radar <- off_radar[!(tab_indic$indic[which(tab_indic$out=="oui")] %in% var_boxplot)]
+        
         
         if(length(off_radar) ==1){
           text = paste("You are off radar for the following indicator :", off_radar, ".", sep = " ")
@@ -558,26 +595,6 @@ if (os == "Windows"){
     fun_viz(i)
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
