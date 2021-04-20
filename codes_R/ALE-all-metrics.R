@@ -1,4 +1,5 @@
 library(stringr)
+library(quanteda.textstats)
 
 #Input: df_sampleALE.csv created with ALE-processing.r 
 #Output: df_sample_all_metrics.csv 
